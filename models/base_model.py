@@ -4,15 +4,20 @@ All other classes will inherit from this class
 """
 from uuid import uuid4
 from datetime import datetime
-
+from models import storage
 
 class BaseModel:
     """BaseModel class
 
     Attributes:
         id (public, instance attribute): string uuid
+        created_at (public, instance attribute): datetime
+        updated_at (public, instance attribute): datetime
     Methods:
-
+        save: updates the public instance attribute updated_at
+                with the current datetime
+        to_dict: returns a dictionary containing all keys/values of
+                __dict__ of the instance
     """
     # pylint: disable-next=unused-argument
     def __init__(self, *args, **kwargs) -> None:
@@ -20,6 +25,7 @@ class BaseModel:
             self.id = str(uuid4())
             self.created_at = datetime.now()
             self.updated_at = datetime.now()
+            storage.new(self)
         else:
             for k, v in kwargs.items():
                 if k == "__class__":
@@ -37,6 +43,7 @@ class BaseModel:
         with the current datetime
         """
         self.updated_at = datetime.now()
+        storage.save()
 
     def to_dict(self) -> dict:
         """returns a dictionary containing all keys/values of
