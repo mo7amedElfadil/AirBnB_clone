@@ -13,7 +13,7 @@ class HBNBCommand(cmd.Cmd):
     prompt = "(hbnb) "
 
     # pylint: disable-next=unused-argument
-    def do_quit(self, arg):
+    def do_quit(self, arg) -> bool:
         """Quit command to exit the program
         """
         return True
