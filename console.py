@@ -107,6 +107,14 @@ class HBNBCommand(cmd.Cmd):
             print("** attribute name missing **")
         elif len(argts) == 3:
             print("** value missing **")
+        else:
+            instance = models.storage.all()[argts[0]+"."+argts[1]]
+            attr = argts[2]
+            val = argts[3]
+            setattr(instance, attr, val)
+            instance.save()
+            models.storage.save()
+
         
 
     do_EOF = do_quit
