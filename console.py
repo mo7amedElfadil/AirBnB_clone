@@ -106,6 +106,18 @@ class HBNBCommand(cmd.Cmd):
             del models.storage._FileStorage__objects[argts[0]+"."+argts[1]]
             models.storage.save()
 
+    def do_all(self, arg):
+        """All command to print all string representatio of
+        every instance based on class name or no class name
+        """
+        all_cls = []
+        if arg and arg not in self.class_name.keys():
+            print("** class doesnt exist **")
+            return
+        for cls in models.storage._FileStorage__objects.keys():
+            all_cls.append(models.storage._FileStorage__objects[cls].__str__())
+
+        print('["{}"]'.format(", ".join(all_cls)))
 
     do_EOF = do_quit
     do_q = do_quit
