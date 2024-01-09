@@ -2,7 +2,8 @@
 """
 Entry point into the AirBnB console app
 """
-import cmd, shlex, models
+import cmd
+import models
 from models.base_model import BaseModel
 # from models.engine.file_storage import FileStorage
 
@@ -40,7 +41,7 @@ class HBNBCommand(cmd.Cmd):
         Show command to print the str representation of an instance
         based on class name and id
         """
-        argts = shlex.split(arg)
+        argts = arg.split()
         if not arg:
             print("** class name missing **")
             return
@@ -52,14 +53,14 @@ class HBNBCommand(cmd.Cmd):
                 models.storage._FileStorage__objects.keys():
                     print("** no instance found **")
         else:
-            new_instance = self.class_name[argts[0]]()
-            print(new_instance.__str__())
+            new_instance = models.storage.all()[argts[0]+"."+argts[1]]
+            print(new_instance)
 
     def do_destroy(self, arg):
         """Destroy command to delete instances specified
         based on class name and id
         """
-        argts = shlex.split(arg)
+        argts = arg.split()
         if not arg:
             print("** class name missing **")
             return
@@ -95,7 +96,7 @@ class HBNBCommand(cmd.Cmd):
         if not arg:
             print("** class name is missing **")
             return
-        argts = shlex.split(arg)
+        argts = arg.split()
         if argts[0] not in self.class_name.keys():
             print("** class doesn't exist **")
         elif len(argts) == 1:
