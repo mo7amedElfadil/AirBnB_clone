@@ -40,20 +40,39 @@ class HBNBCommand(cmd.Cmd):
         Show command to print the str representation of an instance
         based on class name and id
         """
-        arguments = shlex.split(arg)
-        if len(arguments) < 2:
-            print("** instance id is missing **")
+        argts = shlex.split(arg)
         if not arg:
-            print("** class is missing **")
-        elif arguments[0] != "BaseModel":
+            print("** class name missing **")
+            return
+        elif argts[0] != "BaseModel":
             print("** class doesn't exit **")
-        elif arguments[0] + '.' + arguments[1] not in\
+        elif len(argts) < 2:
+            print("** instance id is missing **")
+        elif argts[0]+"."+argts[1] not in\
                 models.storage._FileStorage__objects.keys():
                     print("** no instance found **")
         else:
-            new_instance = self.class_name[arguments[0]]()
+            new_instance = self.class_name[argts[0]]()
             print(new_instance.__str__())
 
+    def do_destroy(self, arg):
+        """Destroy command to delete instances specified
+        based on class name and id
+        """
+        argts = shlex.split(arg)
+        if not arg:
+            print("** class name missing **")
+            return
+        if argts[0] not in self.class_name.keys():
+            print("** class doesn't exist **")
+        elif len(argts) == 1:
+            print("** instance id missing **")
+        elif argts[0]+"."+argts[1] not in\
+                models.storage._FileStorage__objects.keys():
+                    print("** no instance found **")
+        else:
+            del models.storage._FileStorage__objects[argts[0]+"."+argts[1]]
+            models.storage.save()
 
 
     do_EOF = do_quit
