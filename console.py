@@ -19,13 +19,34 @@ from models.place import Place
 from models.review import Review
 from models import storage
 
-
 class HBNBCommand(cmd.Cmd):
     """AirBnB CLI
     Commands:
     quit, EOF, help
     """
     prompt = "(hbnb) "
+    class_name = {'BaseModel': BaseModel}
+
+    _models = {
+        "BaseModel": BaseModel,
+        "User": User,
+        "State": State,
+        "City": City,
+        "Amenity": Amenity,
+        "Place": Place,
+        "Review": Review
+        }
+    str_attr = ["name", "amenity_id", "place_id", "state_id",
+                "user_id", "city_id", "description", "text",
+                "email", "password", "first_name", "last_name"]
+    int_attr = ["number_rooms", "number_bathrooms",
+                "max_guest", "price_by_night"]
+    float_attr = ["latitude", "longitude"]
+
+    patterns = {"all": re.compile(r'(.*)\.(.*)\((.*)\)'),
+                "update": [re.compile(r'^(.+)\,(.+)\,(.+)$'),
+                           re.compile(r'^"?([^"]+)"?\,\s*(\{.+\})$'),
+                           re.compile(r"[\'\"](.*?)[\'\"]")]}
 
     _models = {
         "BaseModel": BaseModel,
@@ -54,6 +75,41 @@ class HBNBCommand(cmd.Cmd):
         """Quit command to exit the program
         """
         return True
+
+    def do_create(self, arg):
+        """
+        create command to create new instance of BaseModel
+        and save it as a json file
+        """
+        if not arg:
+            print("** class name is missing **")
+        elif arg not in self.class_name.keys():
+            print("** class doesn't exit **")
+        else:
+            new_instance = self.class_name[arg]()
+            # new_instance.to_json()
+            print(new_instance.id)
+
+    def do_show(self, arg):
+        """
+        Show command to print the str representation of an instance
+        based on class name and id
+        """
+        arguments = shlex.split(arg)
+        if len(arguments) < 2:
+            print("** instance id is missing **")
+        if not arg:
+            print("** class is missing **")
+        elif arguments[0] != "BaseModel":
+            print("** class doesn't exit **")
+        elif arguments[0] + '.' + arguments[1] not in\
+                models.storage._FileStorage__objects.keys():
+                    print("** no instance found **")
+        else:
+            new_instance = self.class_name[arguments[0]]()
+            print(new_instance.__str__())
+
+
 
     do_EOF = do_quit
 
