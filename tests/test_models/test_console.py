@@ -10,7 +10,8 @@ from console import HBNBCommand
 
 
 class TestBaseModelDocPep8(unittest.TestCase):
-    """unittest class for HBNBCommand class documentation and pep8 conformaty"""
+    """unittest class for HBNBCommand class
+    documentation and pep8 conformaty"""
     def test_pep8_base(self):
         """Test that the base_module conforms to PEP8."""
         style = pep8.StyleGuide(quiet=True)
