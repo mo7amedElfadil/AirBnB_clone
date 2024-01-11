@@ -3,6 +3,7 @@
 file name: test_base_model.py
 """
 import os
+from time import sleep
 from datetime import datetime
 import unittest
 import inspect  # test function and module doc string
@@ -138,7 +139,6 @@ class TestBaseModelClassWorking(unittest.TestCase):
         except ValueError:
             self.fail()
 
-
     def test_saving(self) -> None:
         """test the FileStorage saving of the instance of BaseModel
         """
@@ -148,6 +148,7 @@ class TestBaseModelClassWorking(unittest.TestCase):
 
         # test saving
         old_updated = base.updated_at
+        sleep(0.000001)
         base.save()
         try:
             self.assertTrue(os.path.exists(self.__file_path))
