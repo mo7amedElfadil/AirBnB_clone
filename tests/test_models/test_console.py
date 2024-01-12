@@ -6,6 +6,7 @@ import unittest
 import inspect  # test function and module doc string
 import pep8  # test pep8 conformance
 # from json import dumps, loads #to test the de/serialization
+import console
 from console import HBNBCommand
 
 
@@ -14,7 +15,7 @@ class TestBaseModelDocPep8(unittest.TestCase):
     documentation and pep8 conformaty"""
     def test_pep8_base(self):
         """Test that the base_module conforms to PEP8."""
-        style = pep8.StyleGuide(quiet=True)
+        style = pep8.StyleGuide()
         result = style.check_files(['console.py'])
         self.assertEqual(result.total_errors, 0,
                          "Found code style errors (and warnings).")
@@ -28,7 +29,6 @@ class TestBaseModelDocPep8(unittest.TestCase):
 
     def test_module_docstring(self):
         """test module documentation"""
-        import console
         mod_doc = console.__doc__
         self.assertTrue(len(mod_doc) > 0)
 

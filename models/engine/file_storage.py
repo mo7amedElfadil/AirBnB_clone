@@ -5,8 +5,22 @@ file name: file_storage.py
 from json import dump, load
 from json.decoder import JSONDecodeError
 from models.base_model import BaseModel
+from models.user import User
+from models.state import State
+from models.city import City
+from models.amenity import Amenity
+from models.place import Place
+from models.review import Review
 
-
+models = {
+        "BaseModel": BaseModel,
+        "User": User,
+        "State": State,
+        "City": City,
+        "Amenity": Amenity,
+        "Place": Place,
+        "Review": Review
+        }
 class FileStorage:
     """FileStorage class
 
@@ -44,11 +58,12 @@ class FileStorage:
     def save(self) -> None:
         """serializes __objects to the JSON file (path: __file_path)
         """
-        for k, v in self.__objects.items():
-            self.__objects[k] = v.to_dict()
+        save_data = {}
+        for k, v in  self.__objects.items():
+            save_data[k] = v.to_dict()
         try:
             with open(self.__file_path, "w", encoding="utf-8") as f:
-                dump(self.__objects, f)
+                dump(save_data, f)
         except IOError:
             pass
 
@@ -60,6 +75,9 @@ class FileStorage:
         try:
             with open(self.__file_path, "r", encoding="utf-8") as f:
                 for k, v in load(f).items():
-                    self.__objects[k] = BaseModel(**v)
+                    try:
+                        self.__objects[k] = models[k.split(".")[0]](**v)
+                    except IndexError:
+                        continue
         except (IOError, JSONDecodeError):
             pass

@@ -11,7 +11,7 @@ class BaseModel:
     """BaseModel class
 
     Attributes:
-        id (public, instance attribute): string uuid
+        id (public, instance attribute): string uuid4
         created_at (public, instance attribute): datetime
         updated_at (public, instance attribute): datetime
     Methods:
@@ -20,8 +20,7 @@ class BaseModel:
         to_dict: returns a dictionary containing all keys/values of
                 __dict__ of the instance
     """
-    # pylint: disable-next=unused-argument
-    def __init__(self, *args, **kwargs) -> None:
+    def __init__(self, **kwargs) -> None:
         """Initialization of BaseModel Class"""
         if not kwargs:
             self.id = str(uuid4())
@@ -53,10 +52,10 @@ class BaseModel:
         """returns a dictionary containing all keys/values of
         __dict__ of the instance
         """
-        my_dict = self.__dict__
+        my_dict = self.__dict__.copy()
         my_dict["__class__"] = self.__class__.__name__
-        if not isinstance(my_dict["created_at"], str):
+        if isinstance(my_dict["created_at"], datetime):
             my_dict["created_at"] = my_dict["created_at"].isoformat()
-        if not isinstance(my_dict["updated_at"], str):
+        if isinstance(my_dict["updated_at"], datetime):
             my_dict["updated_at"] = my_dict["updated_at"].isoformat()
         return my_dict
