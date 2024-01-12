@@ -2,8 +2,13 @@
 """
 Entry point into the AirBnB console app
 """
+import shlex
 import cmd
 import re
+from sys import stdin
+from json import loads
+from json.decoder import JSONDecodeError
+from typing import Union
 from models.base_model import BaseModel
 from models.user import User
 from models.state import State
@@ -37,6 +42,11 @@ class HBNBCommand(cmd.Cmd):
                 "max_guest", "price_by_night"]
     float_attr = ["latitude", "longitude"]
 
+    patterns = {"all": re.compile(r'(.*)\.(.*)\((.*)\)'),
+                "update": [re.compile(r'^(.+)\,(.+)\,(.+)$'),
+                           re.compile(r'^"?([^"]+)"?\,\s*(\{.+\})$'),
+                           re.compile(r"[\'\"](.*?)[\'\"]")]}
+
     # pylint: disable-next=unused-argument
     def do_quit(self, arg) -> bool:
         """Quit command to exit the program
@@ -44,13 +54,62 @@ class HBNBCommand(cmd.Cmd):
         return True
 
     do_EOF = do_quit
+    do_q = do_quit
+
+    def precmd(self, line) -> str:
+        """parse command line and determine if reformatting is needed.
+        Helps handle call to commands using Class.command("values"),
+        By splitting it to match the format of the do_cmd
+        Ex:
+        User.update(<ID>, <attribute>, <value>)
+        update User <ID> <attribute> <value>
+        """
+        # class.command(data)
+        pattern = self.patterns
+        args = pattern["all"].match(line)
+        if args:
+            arg_list = []
+            arg_list.append(args.group(2))  # command
+            arg_list.append(args.group(1))  # class
+            arg_list.append(args.group(3))  # rest
+            if arg_list[0] == "count":
+                self.count(args.group(1))
+                return ""
+            if arg_list[0] == "update":
+                # id, attribute, value
+                uvp = pattern["update"][0]
+                # id, {dict}
+                udict = pattern["update"][1]
+                clean = args.group(3).replace("'", '"')
+                # id, {dict}
+                uvp_match = udict.match(clean)
+                res = arg_list[:2]
+                if uvp_match and len(uvp_match.groups()) == 2:
+                    try:
+                        my_dict = loads(uvp_match.group(2))
+                        for k, v in my_dict.items():
+                            # command class id attribute value
+                            self.onecmd(" ".join(res +
+                                                 [uvp_match.group(1),
+                                                  str(k), str(v)]))
+                        return ""
+                    except JSONDecodeError:
+                        pass
+                else:
+                    # id, attribute, value
+                    uvp_match = uvp.match(clean)
+                    res.extend(uvp_match.group().split(','))
+                    return " ".join(res)
+            else:
+                return " ".join(arg_list)
+        return line
 
     def do_create(self, arg) -> None:
         """Create a new instance of a class, save it, print its id
         Ex:
         $ create BaseModel
         """
-        args = arg.split()
+        args = shlex.split(arg)
         if not self.validate_cls(args):
             return
         instance = self._models[args[0]]()
@@ -63,7 +122,7 @@ class HBNBCommand(cmd.Cmd):
         Ex:
         $ show BaseModel 1234-1234-1234
         """
-        args = arg.split()
+        args = shlex.split(arg)
         if not (self.validate_cls(args) and self.validate_id(args)):
             return
         print(storage.all()[args[0] + "." + args[1]])
@@ -74,11 +133,26 @@ class HBNBCommand(cmd.Cmd):
         Ex:
         $ destroy BaseModel 1234-1234-1234
         """
-        args = arg.split()
+        args = shlex.split(arg)
         if not (self.validate_cls(args) and self.validate_id(args)):
             return
         del storage.all()[args[0] + "." + args[1]]
         storage.save()
+
+    def count(self, arg) -> None:
+        """Count all occurences of class instances
+        Ex:
+        $ count BaseModel
+        or
+        $ BaseModel.count()
+        """
+        args = shlex.split(arg)
+        res = 0
+        if len(args) > 0:
+            for k in storage.all():
+                if args[0] == k.split(".")[0]:
+                    res += 1
+        print(res)
 
     def do_all(self, arg) -> None:
         """Prints all string representation of all instances
@@ -88,7 +162,7 @@ class HBNBCommand(cmd.Cmd):
         or
         $ all
         """
-        args = arg.split()
+        args = shlex.split(arg)
         res = []
         if len(args) > 0:
             for k, v in storage.all().items():
@@ -106,8 +180,10 @@ class HBNBCommand(cmd.Cmd):
         Ex:
         $ update BaseModel 1234-1234-1234 email "aibnb@mail.com"
         """
-        args = arg.split()
+
+        args = shlex.split(arg)
         key = args[0] + "." + args[1]
+
         if not (self.validate_cls(args) and self.validate_id(args)):
             return
         if len(args) < 3:
@@ -117,10 +193,12 @@ class HBNBCommand(cmd.Cmd):
             print("** value missing **")
             return
         if args[3].startswith(("'", '"')) and args[3].endswith(("'", '"')):
-            match = re.match(r"[\'\"](.*?)[\'\"]", args[3]).group(1)
+
+            match = self.patterns["update"][2].match(args[3]).group(1)
         else:
             match = args[3]
         instance = storage.all()[key]
+
         if args[2] in self.int_attr:
             setattr(instance,
                     args[2], int(match))
@@ -132,8 +210,8 @@ class HBNBCommand(cmd.Cmd):
             setattr(instance, args[2], self.type_cast(match))
         storage.save()
 
-    def type_cast(self, arg) -> (float | int | str):
-        """determine type of arg and cast it
+    def type_cast(self, arg) -> Union[float, int, str]:
+        """determine type of arg and cast it to the correct type
         """
         try:
             if "." in arg:
@@ -144,6 +222,7 @@ class HBNBCommand(cmd.Cmd):
 
     def validate_cls(self, args) -> bool:
         """validate class creation
+        Checks if class name is provide and it exists
         """
         if len(args) < 1:
             print("** class name missing **")
@@ -155,6 +234,7 @@ class HBNBCommand(cmd.Cmd):
 
     def validate_id(self, args) -> bool:
         """validate id of class instance
+        Checks if id is provide and it exists
         """
         if len(args) < 2:
             print("** instance id missing **")
@@ -167,4 +247,8 @@ class HBNBCommand(cmd.Cmd):
 
 
 if __name__ == "__main__":
-    HBNBCommand().cmdloop()
+    if not stdin.isatty():
+        for cmd in stdin:
+            HBNBCommand().onecmd(cmd.strip())
+    else:
+        HBNBCommand().cmdloop()
