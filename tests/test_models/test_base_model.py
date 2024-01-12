@@ -9,7 +9,7 @@ import unittest
 import inspect  # test function and module doc string
 import re
 from json import load  # , dump # to test the de/serialization
-import pep8  # test pep8 conformance
+import pep8  # test pep8 style conformance
 from models.base_model import BaseModel
 import models.base_model as base_model
 from models import storage

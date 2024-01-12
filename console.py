@@ -18,34 +18,13 @@ from models.place import Place
 from models.review import Review
 from models import storage
 
+
 class HBNBCommand(cmd.Cmd):
     """AirBnB CLI
     Commands:
     quit, EOF, help
     """
     prompt = "(hbnb) "
-    class_name = {'BaseModel': BaseModel}
-
-    _models = {
-        "BaseModel": BaseModel,
-        "User": User,
-        "State": State,
-        "City": City,
-        "Amenity": Amenity,
-        "Place": Place,
-        "Review": Review
-        }
-    str_attr = ["name", "amenity_id", "place_id", "state_id",
-                "user_id", "city_id", "description", "text",
-                "email", "password", "first_name", "last_name"]
-    int_attr = ["number_rooms", "number_bathrooms",
-                "max_guest", "price_by_night"]
-    float_attr = ["latitude", "longitude"]
-
-    patterns = {"all": re.compile(r'(.*)\.(.*)\((.*)\)'),
-                "update": [re.compile(r'^(.+)\,(.+)\,(.+)$'),
-                           re.compile(r'^"?([^"]+)"?\,\s*(\{.+\})$'),
-                           re.compile(r"[\'\"](.*?)[\'\"]")]}
 
     _models = {
         "BaseModel": BaseModel,
@@ -73,102 +52,6 @@ class HBNBCommand(cmd.Cmd):
         """Quit command to exit the program
         """
         return True
-
-    def do_create(self, arg):
-        """
-        create command to create new instance of BaseModel
-        and save it as a json file
-        """
-        if not arg:
-            print("** class name is missing **")
-        elif arg not in self.class_name.keys():
-            print("** class doesn't exit **")
-        else:
-            new_instance = self.class_name[arg]()
-            # new_instance.to_json()
-            print(new_instance.id)
-
-    def do_show(self, arg):
-        """
-        Show command to print the str representation of an instance
-        based on class name and id
-        """
-        argts = arg.split()
-        if not arg:
-            print("** class name missing **")
-            return
-        elif argts[0] != "BaseModel":
-            print("** class doesn't exit **")
-        elif len(argts) < 2:
-            print("** instance id is missing **")
-        elif argts[0]+"."+argts[1] not in\
-                models.storage._FileStorage__objects.keys():
-                    print("** no instance found **")
-        else:
-            new_instance = models.storage.all()[argts[0]+"."+argts[1]]
-            print(new_instance)
-
-    def do_destroy(self, arg):
-        """Destroy command to delete instances specified
-        based on class name and id
-        """
-        argts = arg.split()
-        if not arg:
-            print("** class name missing **")
-            return
-        if argts[0] not in self.class_name.keys():
-            print("** class doesn't exist **")
-        elif len(argts) == 1:
-            print("** instance id missing **")
-        elif argts[0]+"."+argts[1] not in\
-                models.storage._FileStorage__objects.keys():
-                    print("** no instance found **")
-        else:
-            del models.storage._FileStorage__objects[argts[0]+"."+argts[1]]
-            models.storage.save()
-
-    def do_all(self, arg):
-        """All command to print all string representatio of
-        every instance based on class name or no class name
-        """
-        all_cls = []
-        if arg and arg not in self.class_name.keys():
-            print("** class doesnt exist **")
-            return
-        for cls in models.storage._FileStorage__objects.keys():
-            all_cls.append(models.storage._FileStorage__objects[cls].__str__())
-
-        print('["{}"]'.format(", ".join(all_cls)))
-
-    def do_update(self, arg):
-        """Update command to update an instance
-        based on the class name and id
-        adding or updating the attribute
-        """
-        if not arg:
-            print("** class name is missing **")
-            return
-        argts = arg.split()
-        if argts[0] not in self.class_name.keys():
-            print("** class doesn't exist **")
-        elif len(argts) == 1:
-            print("** instance id missing **")
-        elif argts[0]+"."+argts[1] not in\
-                models.storage._FileStorage__objects.keys():
-                    print("** no instance found **")
-        elif len(argts) == 2:
-            print("** attribute name missing **")
-        elif len(argts) == 3:
-            print("** value missing **")
-        else:
-            instance = models.storage.all()[argts[0]+"."+argts[1]]
-            attr = argts[2]
-            val = argts[3]
-            setattr(instance, attr, val)
-            instance.save()
-            models.storage.save()
-
-        
 
     do_EOF = do_quit
     do_q = do_quit
@@ -297,7 +180,10 @@ class HBNBCommand(cmd.Cmd):
         Ex:
         $ update BaseModel 1234-1234-1234 email "aibnb@mail.com"
         """
+
         args = shlex.split(arg)
+        key = args[0] + "." + args[1]
+
         if not (self.validate_cls(args) and self.validate_id(args)):
             return
         if len(args) < 3:
@@ -307,21 +193,21 @@ class HBNBCommand(cmd.Cmd):
             print("** value missing **")
             return
         if args[3].startswith(("'", '"')) and args[3].endswith(("'", '"')):
+
             match = self.patterns["update"][2].match(args[3]).group(1)
         else:
             match = args[3]
+        instance = storage.all()[key]
+
         if args[2] in self.int_attr:
-            setattr(storage.all()[args[0] + "." + args[1]],
+            setattr(instance,
                     args[2], int(match))
         elif args[2] in self.str_attr:
-            setattr(storage.all()[args[0] + "." + args[1]],
-                    args[2], str(match))
+            setattr(instance, args[2], str(match))
         elif args[2] in self.float_attr:
-            setattr(storage.all()[args[0] + "." + args[1]],
-                    args[2], float(match))
+            setattr(instance, args[2], float(match))
         else:
-            setattr(storage.all()[args[0] + "." + args[1]],
-                    args[2], self.type_cast(match))
+            setattr(instance, args[2], self.type_cast(match))
         storage.save()
 
     def type_cast(self, arg) -> Union[float, int, str]:
