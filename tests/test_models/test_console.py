@@ -64,7 +64,8 @@ class TestBaseModelDocPep8(unittest.TestCase):
 class TestHBNBCommandClassWorking(unittest.TestCase):
     """unittest class for BaseModel class when everything works
     """
-    def test_create(self):
+
+    def test_create_User(self):
         """test create()
         """
         with patch('sys.stdout', new=StringIO()) as f:
@@ -81,6 +82,23 @@ class TestHBNBCommandClassWorking(unittest.TestCase):
 
             self.assertEqual(value, res)
 
+    
+def test_create_(self):
+        """test create()
+        """
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("create User")
+            re_match = re.compile(r'^([0-9a-fA-F]{8}-' +
+                                  r'[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a' +
+                                  r'-fA-F]{4}-[0-9a-fA-F]{12})$')
+            value = f.getvalue().strip()
+            res = re_match.match(value).group().strip()
+            print("Expected pattern:", re_match.pattern)
+
+            key = "User." + res
+            self.assertIn(key, storage.all())
+
+            self.assertEqual(value, res)
 # class TestHBNBCommandClassBreaking(unittest.TestCase):
 #     """unittest class for BaseModel class when everything breaks"""
 #     pass
