@@ -2,6 +2,7 @@
 """file_storage module. Contains FileStorage class
 file name: file_storage.py
 """
+import shlex
 from json import dump, load
 from json.decoder import JSONDecodeError
 from models.base_model import BaseModel
