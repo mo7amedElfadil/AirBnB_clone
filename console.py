@@ -54,7 +54,7 @@ class HBNBCommand(cmd.Cmd):
         return True
 
     do_EOF = do_quit
-    do_q = do_quit
+
 
     def precmd(self, line) -> str:
         """parse command line and determine if reformatting is needed.
