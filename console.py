@@ -180,7 +180,10 @@ class HBNBCommand(cmd.Cmd):
         Ex:
         $ update BaseModel 1234-1234-1234 email "aibnb@mail.com"
         """
+
         args = shlex.split(arg)
+        key = args[0] + "." + args[1]
+
         if not (self.validate_cls(args) and self.validate_id(args)):
             return
         if len(args) < 3:
@@ -190,21 +193,21 @@ class HBNBCommand(cmd.Cmd):
             print("** value missing **")
             return
         if args[3].startswith(("'", '"')) and args[3].endswith(("'", '"')):
+
             match = self.patterns["update"][2].match(args[3]).group(1)
         else:
             match = args[3]
+        instance = storage.all()[key]
+
         if args[2] in self.int_attr:
-            setattr(storage.all()[args[0] + "." + args[1]],
+            setattr(instance,
                     args[2], int(match))
         elif args[2] in self.str_attr:
-            setattr(storage.all()[args[0] + "." + args[1]],
-                    args[2], str(match))
+            setattr(instance, args[2], str(match))
         elif args[2] in self.float_attr:
-            setattr(storage.all()[args[0] + "." + args[1]],
-                    args[2], float(match))
+            setattr(instance, args[2], float(match))
         else:
-            setattr(storage.all()[args[0] + "." + args[1]],
-                    args[2], self.type_cast(match))
+            setattr(instance, args[2], self.type_cast(match))
         storage.save()
 
     def type_cast(self, arg) -> Union[float, int, str]:
