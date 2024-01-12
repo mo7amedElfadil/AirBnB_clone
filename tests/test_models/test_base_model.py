@@ -54,7 +54,7 @@ class TestBaseModelClassWorking(unittest.TestCase):
     """unittest class for BaseModel class when everything works"""
     def setUp(self) -> None:
         """Set up instances and variables"""
-        self.__file_path = "file.json"
+        self.__file_path = storage._FileStorage__file_path
         self.default = BaseModel()
         self.b1 = BaseModel()
         self.b2 = BaseModel()
@@ -63,6 +63,27 @@ class TestBaseModelClassWorking(unittest.TestCase):
                                      r'-fA-F]{4}-[0-9a-fA-F]{12}$')
         self.str_pattern = re.compile(r'\[([^]]+)\] \(([^)]+)\) (.+)')
         self.iso_format = '%Y-%m-%dT%H:%M:%S.%f'
+        self.fake_base = {"id": 0, "created_at": datetime.now().isoformat(),
+                          "updated_at": datetime.now().isoformat(),
+                          "first_name": "Mohamed"}
+
+    def test_attributes(self) -> None:
+        """test the attributes of the instance of BaseModel
+        """
+        base = self.default
+
+        self.assertTrue(hasattr(base, "id"))
+        self.assertTrue(hasattr(base, "created_at"))
+        self.assertTrue(hasattr(base, "updated_at"))
+        # test attributes type
+        self.assertIsInstance(base.id, str)
+        self.assertIsInstance(base.created_at, datetime)
+        self.assertIsInstance(base.updated_at, datetime)
+        # test attributes
+        self.assertTrue(hasattr(base, "__init__"))
+        self.assertTrue(hasattr(base, "__str__"))
+        self.assertTrue(hasattr(base, "save"))
+        self.assertTrue(hasattr(base, "to_dict"))
 
     def test_id(self) -> None:
         """test the id attribute of the instance of BaseModel
@@ -120,6 +141,30 @@ class TestBaseModelClassWorking(unittest.TestCase):
         self.assertEqual(base.id, kw_base.id)
         self.assertEqual(base.to_dict(), kw_base.to_dict())
 
+    def test_kwarg_creation_not_exist(self) -> None:
+        """test creation of an instance of BaseModel using kwargs
+        """
+        kw_base = BaseModel(**self.fake_base)
+        self.assertEqual(self.fake_base["id"], kw_base.id)
+        self.assertEqual(self.fake_base["created_at"],
+                         kw_base.created_at.isoformat())
+        self.assertEqual(self.fake_base["updated_at"],
+                         kw_base.updated_at.isoformat())
+        self.assertEqual(self.fake_base["first_name"],
+                         kw_base.first_name)
+
+    def test_updating_attributes(self) -> None:
+        """test updating the attributes of the instance of BaseModel
+        """
+        base = self.default
+        # test updating
+        base.first_name = "Mohamed"
+        self.assertEqual(base.first_name, "Mohamed")
+        self.assertEqual(base.to_dict()["first_name"], "Mohamed")
+        # test deleting
+        del base.first_name
+        self.assertFalse(hasattr(base, "first_name"))
+
     def test_datetime(self) -> None:
         """test the datetime attributes of the instance of BaseModel
         """
@@ -143,13 +188,16 @@ class TestBaseModelClassWorking(unittest.TestCase):
         """test the FileStorage saving of the instance of BaseModel
         """
         base = self.default
-        # test stored
-        self.assertTrue(base in storage.all().values())
 
         # test saving
         old_updated = base.updated_at
         sleep(0.000001)
         base.save()
+        # test stored
+        self.assertTrue(base in storage.all().values())
+        self.assertTrue(hasattr(storage.all()[base.__class__.__name__ +
+                                              "." + base.id], "updated_at"))
+
         try:
             self.assertTrue(os.path.exists(self.__file_path))
             with open(self.__file_path, "r", encoding="utf-8") as f:
