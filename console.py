@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 """
 Entry point into the AirBnB console app
+TODO update docs
 """
 import shlex
 import cmd
@@ -43,8 +44,9 @@ class HBNBCommand(cmd.Cmd):
     float_attr = ["latitude", "longitude"]
 
     patterns = {"all": re.compile(r'(.*)\.(.*)\((.*)\)'),
+                # id, attribute, value
                 "update": [re.compile(r'^(.+)\,(.+)\,(.+)$'),
-                           re.compile(r'^"?([^"]+)"?\,\s*(\{.+\})$'),
+                           re.compile(r'^[\'\"]?([^"]+)[\'\"]?\,\s*(\{.+\})$'),
                            re.compile(r"[\'\"](.*?)[\'\"]")]}
 
     # pylint: disable-next=unused-argument
@@ -54,7 +56,6 @@ class HBNBCommand(cmd.Cmd):
         return True
 
     do_EOF = do_quit
-
 
     def precmd(self, line) -> str:
         """parse command line and determine if reformatting is needed.
@@ -91,7 +92,8 @@ class HBNBCommand(cmd.Cmd):
                             # command class id attribute value
                             self.onecmd(" ".join(res +
                                                  [uvp_match.group(1),
-                                                  str(k), str(v)]))
+                                                  '"' + str(k) + '"',
+                                                  '"' + str(v) + '"']))
                         return ""
                     except JSONDecodeError:
                         pass
@@ -147,6 +149,8 @@ class HBNBCommand(cmd.Cmd):
         $ BaseModel.count()
         """
         args = shlex.split(arg)
+        if not self.validate_cls(args):
+            return
         res = 0
         if len(args) > 0:
             for k in storage.all():
@@ -163,6 +167,8 @@ class HBNBCommand(cmd.Cmd):
         $ all
         """
         args = shlex.split(arg)
+        if not self.validate_cls(args):
+            return
         res = []
         if len(args) > 0:
             for k, v in storage.all().items():
@@ -180,7 +186,6 @@ class HBNBCommand(cmd.Cmd):
         Ex:
         $ update BaseModel 1234-1234-1234 email "aibnb@mail.com"
         """
-
         args = shlex.split(arg)
         key = args[0] + "." + args[1]
 
@@ -192,11 +197,10 @@ class HBNBCommand(cmd.Cmd):
         if len(args) < 4:
             print("** value missing **")
             return
-        if args[3].startswith(("'", '"')) and args[3].endswith(("'", '"')):
-
-            match = self.patterns["update"][2].match(args[3]).group(1)
-        else:
-            match = args[3]
+        # if args[3].startswith(("'", '"')) and args[3].endswith(("'", '"')):
+            # match = self.patterns["update"][2].match(args[3]).group(1)
+        # else:
+        match = args[3]
         instance = storage.all()[key]
 
         if args[2] in self.int_attr:
@@ -244,7 +248,6 @@ class HBNBCommand(cmd.Cmd):
             print("** no instance found **")
             return False
         return True
-
 
 if __name__ == "__main__":
     if not stdin.isatty():
