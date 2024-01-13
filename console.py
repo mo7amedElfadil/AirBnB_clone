@@ -55,7 +55,15 @@ class HBNBCommand(cmd.Cmd):
         """
         return True
 
-    do_EOF = do_quit
+    # pylint: disable-next=unused-argument
+    def do_EOF(self, arg) -> bool:
+        """EOF or Ctrl-D command to exit the program
+        """
+        return True
+
+    def emptyline(self) -> bool:
+        """Empty line should do nothing"""
+        return False
 
     def precmd(self, line) -> str:
         """parse command line and determine if reformatting is needed.
@@ -168,9 +176,6 @@ class HBNBCommand(cmd.Cmd):
         $ all
         """
         args = shlex.split(arg)
-
-        
-
         res = []
         if len(args) > 0:
             if not self.validate_cls(args):
