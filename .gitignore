@@ -6,6 +6,7 @@
 !/tests
 !/tests/*
 !/tests/test_models/*
+!/tests/test_models/test_engine/*
 !/models
 !/models/*
 !/models/engine
