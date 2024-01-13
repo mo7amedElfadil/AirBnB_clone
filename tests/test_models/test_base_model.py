@@ -69,7 +69,6 @@ class TestBaseModelClassWorking(unittest.TestCase):
                           "updated_at": datetime.now().isoformat(),
                           "first_name": "Mohamed"}
 
-
     def test_create_save(self) -> None:
         """Test default object creation and verify if
         storage.save is called when saving a new instance
@@ -84,9 +83,7 @@ class TestBaseModelClassWorking(unittest.TestCase):
         """test the attributes of the instance of BaseModel
         """
         base = self.instances[0]
-
         self.assertIsInstance(base, BaseModel)
-
         self.assertTrue(hasattr(base, "id"))
         self.assertTrue(hasattr(base, "created_at"))
         self.assertTrue(hasattr(base, "updated_at"))
@@ -94,11 +91,9 @@ class TestBaseModelClassWorking(unittest.TestCase):
         self.assertIsInstance(base.id, str)
         self.assertIsInstance(base.created_at, datetime)
         self.assertIsInstance(base.updated_at, datetime)
-
         # TODO: determine if test is necessary as values are same
         # self.assertNotEqual(base.created_at, base.updated_at)
         # test methods
-
         self.assertTrue(hasattr(base, "__init__"))
         self.assertTrue(hasattr(base, "__str__"))
         self.assertTrue(hasattr(base, "save"))
@@ -163,7 +158,6 @@ class TestBaseModelClassWorking(unittest.TestCase):
         self.assertEqual(base.id, kw_base.id)
         self.assertEqual(base.to_dict(), kw_base.to_dict())
 
-
     def test_init_kwarg_creation_not_exist(self) -> None:
 
         """test creation of an instance of BaseModel using kwargs
@@ -176,7 +170,6 @@ class TestBaseModelClassWorking(unittest.TestCase):
                          kw_base.updated_at.isoformat())
         self.assertEqual(self.fake_base["first_name"],
                          kw_base.first_name)
-
 
     def test_update_attributes(self) -> None:
         """test updating the attributes of the instance of BaseModel
@@ -221,14 +214,10 @@ class TestBaseModelClassWorking(unittest.TestCase):
     def test_saving(self) -> None:
         """test the FileStorage saving of the instance of BaseModel
         """
-
         base = self.instances[0]
-
-
         key = base.__class__.__name__ + "." + base.id
         # test saving
         old_updated = base.updated_at
-
         sleep(0.00000001)
         base.save()
         # test updated at changed
@@ -238,7 +227,6 @@ class TestBaseModelClassWorking(unittest.TestCase):
         self.assertTrue(base in storage.all().values())
         self.assertTrue(hasattr(storage.all()[base.__class__.__name__ +
                                               "." + base.id], "updated_at"))
-
         try:
             self.assertTrue(os.path.exists(self.__file_path))
             with open(self.__file_path, "r", encoding="utf-8") as f:

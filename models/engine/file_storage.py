@@ -13,7 +13,6 @@ from models.place import Place
 from models.review import Review
 
 
-
 class FileStorage:
     """FileStorage class
 
@@ -46,7 +45,6 @@ class FileStorage:
         "Review": Review
         }
 
-
     def all(self) -> dict:
         """returns the dictionary __objects
         """
@@ -61,7 +59,7 @@ class FileStorage:
         """serializes __objects to the JSON file (path: __file_path)
         """
         save_data = {}
-        for k, v in  self.__objects.items():
+        for k, v in self.__objects.items():
             save_data[k] = v.to_dict()
         try:
             with open(self.__file_path, "w", encoding="utf-8") as f:
