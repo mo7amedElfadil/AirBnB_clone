@@ -8,6 +8,7 @@ import pep8  # test pep8 conformance
 # from json import dumps, loads #to test the de/serialization
 from models.engine.file_storage import FileStorage
 import models.engine.file_storage as file_storage
+from models import storage
 
 
 class TestBaseModelDocPep8(unittest.TestCase):
@@ -44,9 +45,28 @@ class TestBaseModelDocPep8(unittest.TestCase):
         for func in base_funcs:
             self.assertTrue(len(str(func[1].__doc__)) > 0)
 
-# class TestFileStorageClassWorking(unittest.TestCase):
-#     """unittest class for BaseModel class when everything works"""
-#     pass
+
+# TODO: Test cases for FS
+class TestFileStorageClassWorking(unittest.TestCase):
+    """unittest class for FileStorage class when everything works"""
+    def setUp(self) -> None:
+        """Set up instances and variables"""
+        self.__file_path = storage._FileStorage__file_path
+
+    def test_file_path(self):
+        """Test file path"""
+        self.assertTrue(hasattr(FileStorage, "_FileStorage__file_path"))
+        self.assertEqual(self.__file_path,
+                         "file.json")
+
+    def test_all(self):
+        """Test all"""
+        self.assertTrue(hasattr(FileStorage, "all"))
+        self.assertEqual(type(storage.all()), dict)
+        self.assertIs(storage.all(),
+                      storage._FileStorage__objects)
+
+    # def tearDown(self) -> None:
 
 # class TestFileStorageClassBreaking(unittest.TestCase):
 #     """unittest class for BaseModel class when everything breaks"""
