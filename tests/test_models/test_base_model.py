@@ -6,6 +6,9 @@ import os
 from time import sleep
 from datetime import datetime
 import unittest
+from unittest.mock import patch
+from contextlib import redirect_stdout
+from io import StringIO
 import inspect  # test function and module doc string
 import re
 from json import load  # , dump # to test the de/serialization
@@ -55,9 +58,8 @@ class TestBaseModelClassWorking(unittest.TestCase):
     def setUp(self) -> None:
         """Set up instances and variables"""
         self.__file_path = storage._FileStorage__file_path
-        self.default = BaseModel()
-        self.b1 = BaseModel()
-        self.b2 = BaseModel()
+        self.instances = [BaseModel()]
+        self.instances.append(BaseModel())
         self.id_pattern = re.compile(r'^[0-9a-fA-F]{8}-' +
                                      r'[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a' +
                                      r'-fA-F]{4}-[0-9a-fA-F]{12}$')
@@ -67,10 +69,23 @@ class TestBaseModelClassWorking(unittest.TestCase):
                           "updated_at": datetime.now().isoformat(),
                           "first_name": "Mohamed"}
 
+
+    def test_create_save(self) -> None:
+        """Test default object creation and verify if
+        storage.save is called when saving a new instance
+        """
+        with patch('models.storage.save') as save_mock:
+            new = BaseModel()
+            self.instances.append(new)
+            new.save()
+            save_mock.assert_called()
+
     def test_attributes(self) -> None:
         """test the attributes of the instance of BaseModel
         """
-        base = self.default
+        base = self.instances[0]
+
+        self.assertIsInstance(base, BaseModel)
 
         self.assertTrue(hasattr(base, "id"))
         self.assertTrue(hasattr(base, "created_at"))
@@ -79,7 +94,11 @@ class TestBaseModelClassWorking(unittest.TestCase):
         self.assertIsInstance(base.id, str)
         self.assertIsInstance(base.created_at, datetime)
         self.assertIsInstance(base.updated_at, datetime)
-        # test attributes
+
+        # TODO: determine if test is necessary as values are same
+        # self.assertNotEqual(base.created_at, base.updated_at)
+        # test methods
+
         self.assertTrue(hasattr(base, "__init__"))
         self.assertTrue(hasattr(base, "__str__"))
         self.assertTrue(hasattr(base, "save"))
@@ -88,8 +107,8 @@ class TestBaseModelClassWorking(unittest.TestCase):
     def test_id(self) -> None:
         """test the id attribute of the instance of BaseModel
         """
-        base = self.default
-        new = self.b1
+        base = self.instances[0]
+        new = self.instances[1]
         # test id not equal
         self.assertNotEqual(base.id, new.id)
         # test id type
@@ -100,8 +119,8 @@ class TestBaseModelClassWorking(unittest.TestCase):
     def test_str(self) -> None:
         """test the string represenation of the instance of BaseModel
         """
-        base = self.default
-        new = self.b1
+        base = self.instances[0]
+        new = self.instances[1]
         # test instance str representation
         self.assertIsInstance(str(base), str)
         # test each instance unique
@@ -115,11 +134,14 @@ class TestBaseModelClassWorking(unittest.TestCase):
         self.assertEqual(match.group(3), str(base.__dict__))
         # test same class instance has same value
         self.assertEqual(match.group(1), new.__class__.__name__)
+        with redirect_stdout(StringIO()) as f:
+            print(base)
+        self.assertEqual(f.getvalue().strip(), str(base))
 
     def test_to_dict(self) -> None:
         """test the to_dict method of the instance of BaseModel
         """
-        base = self.default
+        base = self.instances[0]
         dic = base.__dict__
         to_dic = base.to_dict()
         for k, v in dic.items():
@@ -133,15 +155,17 @@ class TestBaseModelClassWorking(unittest.TestCase):
         self.assertEqual(base.updated_at,
                          datetime.fromisoformat(to_dic["updated_at"]))
 
-    def test_kwarg_creation(self) -> None:
+    def test_init_kwarg_creation(self) -> None:
         """test creation of an instance of BaseModel using kwargs
         """
-        base = self.default
+        base = self.instances[0]
         kw_base = BaseModel(**base.to_dict())
         self.assertEqual(base.id, kw_base.id)
         self.assertEqual(base.to_dict(), kw_base.to_dict())
 
-    def test_kwarg_creation_not_exist(self) -> None:
+
+    def test_init_kwarg_creation_not_exist(self) -> None:
+
         """test creation of an instance of BaseModel using kwargs
         """
         kw_base = BaseModel(**self.fake_base)
@@ -153,14 +177,24 @@ class TestBaseModelClassWorking(unittest.TestCase):
         self.assertEqual(self.fake_base["first_name"],
                          kw_base.first_name)
 
-    def test_updating_attributes(self) -> None:
+
+    def test_update_attributes(self) -> None:
         """test updating the attributes of the instance of BaseModel
         """
-        base = self.default
+        base = self.instances[0]
         # test updating
         base.first_name = "Mohamed"
+        key = base.__class__.__name__ + "." + base.id
+
         self.assertEqual(base.first_name, "Mohamed")
         self.assertEqual(base.to_dict()["first_name"], "Mohamed")
+        self.assertTrue(storage.all()[key] is base)
+        self.assertTrue(hasattr(storage.all()[key], "first_name"))
+
+        setattr(base, "last_name", "Elfadil")
+        self.assertTrue(hasattr(base, "last_name"))
+        self.assertTrue(hasattr(storage.all()[key], "last_name"))
+
         # test deleting
         del base.first_name
         self.assertFalse(hasattr(base, "first_name"))
@@ -168,7 +202,7 @@ class TestBaseModelClassWorking(unittest.TestCase):
     def test_datetime(self) -> None:
         """test the datetime attributes of the instance of BaseModel
         """
-        base = self.default
+        base = self.instances[0]
         # test datetime
         self.assertIsInstance(base.created_at, datetime)
         try:
@@ -187,12 +221,19 @@ class TestBaseModelClassWorking(unittest.TestCase):
     def test_saving(self) -> None:
         """test the FileStorage saving of the instance of BaseModel
         """
-        base = self.default
 
+        base = self.instances[0]
+
+
+        key = base.__class__.__name__ + "." + base.id
         # test saving
         old_updated = base.updated_at
-        sleep(0.000001)
+
+        sleep(0.00000001)
         base.save()
+        # test updated at changed
+        self.assertNotEqual(old_updated, base.updated_at)
+        self.assertLess(old_updated, base.updated_at)
         # test stored
         self.assertTrue(base in storage.all().values())
         self.assertTrue(hasattr(storage.all()[base.__class__.__name__ +
@@ -201,11 +242,11 @@ class TestBaseModelClassWorking(unittest.TestCase):
         try:
             self.assertTrue(os.path.exists(self.__file_path))
             with open(self.__file_path, "r", encoding="utf-8") as f:
-                content = load(f).values()
+                content = load(f)
         except IOError:
             pass
-        self.assertTrue(base.to_dict() in content)
-        self.assertNotEqual(old_updated, base.updated_at)
+        self.assertIn(key, content)
+        self.assertEqual(content[key], base.to_dict())
 
     def test_deleting(self) -> None:
         """test the FileStorage deleting of the instance of BaseModel
@@ -231,13 +272,7 @@ class TestBaseModelClassWorking(unittest.TestCase):
 
     def tearDown(self) -> None:
         """Tear down instances and variables"""
-        del storage.all()[self.default.__class__.__name__ +
-                          "." + self.default.id]
-        del storage.all()[self.b1.__class__.__name__ +
-                          "." + self.b1.id]
-        del storage.all()[self.b2.__class__.__name__ +
-                          "." + self.b2.id]
+        for instance in self.instances:
+            del storage.all()[instance.__class__.__name__ +
+                              "." + instance.id]
         storage.save()
-# class TestBaseModelClassBreaking(unittest.TestCase):
-#     """unittest class for BaseModel class when everything breaks"""
-#     pass

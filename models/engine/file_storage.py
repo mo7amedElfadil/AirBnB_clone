@@ -12,15 +12,8 @@ from models.amenity import Amenity
 from models.place import Place
 from models.review import Review
 
-models = {
-        "BaseModel": BaseModel,
-        "User": User,
-        "State": State,
-        "City": City,
-        "Amenity": Amenity,
-        "Place": Place,
-        "Review": Review
-        }
+
+
 class FileStorage:
     """FileStorage class
 
@@ -43,6 +36,15 @@ class FileStorage:
     """
     __file_path = "file.json"
     __objects = {}
+    __models = {
+        "BaseModel": BaseModel,
+        "User": User,
+        "State": State,
+        "City": City,
+        "Amenity": Amenity,
+        "Place": Place,
+        "Review": Review
+        }
 
 
     def all(self) -> dict:
@@ -76,7 +78,7 @@ class FileStorage:
             with open(self.__file_path, "r", encoding="utf-8") as f:
                 for k, v in load(f).items():
                     try:
-                        self.__objects[k] = models[k.split(".")[0]](**v)
+                        self.__objects[k] = self.__models[k.split(".")[0]](**v)
                     except IndexError:
                         continue
         except (IOError, JSONDecodeError):
