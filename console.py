@@ -70,8 +70,9 @@ class HBNBCommand(cmd.Cmd):
         Helps handle call to commands using Class.command("values"),
         By splitting it to match the format of the do_cmd
         Ex:
-        User.update(<ID>, <attribute>, <value>)
-        update User <ID> <attribute> <value>
+        $ update User <ID> <attribute> <value>
+        $ User.update(<ID>, <attribute>, <value>)
+        $ User.update(<ID>, {<attribute1>: <value1>, <attribute2>: <value2>})
         """
         # class.command(data)
         pattern = self.patterns
@@ -119,6 +120,8 @@ class HBNBCommand(cmd.Cmd):
         """Create a new instance of a class, save it, print its id
         Ex:
         $ create BaseModel
+        $ <class name>.create()
+        $ User.create()
         """
         args = shlex.split(arg)
         if not self.validate_cls(args):
@@ -132,6 +135,8 @@ class HBNBCommand(cmd.Cmd):
         based on the class name and id
         Ex:
         $ show BaseModel 1234-1234-1234
+        $ <class name>.show(id)
+        $ BaseModel.show(1234-1234-1234)
         """
         args = shlex.split(arg)
         if not (self.validate_cls(args) and self.validate_id(args)):
@@ -143,6 +148,8 @@ class HBNBCommand(cmd.Cmd):
         (save the change into the JSON file)
         Ex:
         $ destroy BaseModel 1234-1234-1234
+        $ <class name>.destroy(id)
+        $ BaseModel.destroy(1234-1234-1234)
         """
         args = shlex.split(arg)
         if not (self.validate_cls(args) and self.validate_id(args)):
@@ -154,7 +161,6 @@ class HBNBCommand(cmd.Cmd):
         """Count all occurences of class instances
         Ex:
         $ count BaseModel
-        or
         $ BaseModel.count()
         """
         args = shlex.split(arg)
@@ -172,9 +178,10 @@ class HBNBCommand(cmd.Cmd):
         """Prints all string representation of all instances
         based or not on the class name
         Ex:
-        $ all BaseModel
-        or
         $ all
+        $ all BaseModel
+        $ <class name>.all()
+        $ BaseModel.all()
         """
         args = shlex.split(arg)
         res = []
@@ -194,7 +201,10 @@ class HBNBCommand(cmd.Cmd):
         by adding or updating attribute (save the change into the JSON file).
         update <class name> <id> <attribute name> "<attribute value>"
         Ex:
-        $ update BaseModel 1234-1234-1234 email "aibnb@mail.com"
+        $ update BaseModel 1234-1234-1234 email "aibnb@mail.com" 
+        $ update User <ID> <attribute> <value>
+        $ User.update(<ID>, <attribute>, <value>)
+        $ User.update(<ID>, {<attribute1>: <value1>, <attribute2>: <value2>})
         """
 
         args = shlex.split(arg)
