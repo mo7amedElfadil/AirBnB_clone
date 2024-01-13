@@ -6,7 +6,6 @@ TODO update docs
 import shlex
 import cmd
 import re
-from sys import stdin
 from json import loads
 from json.decoder import JSONDecodeError
 from typing import Union
@@ -306,8 +305,4 @@ class HBNBCommand(cmd.Cmd):
         return True
 
 if __name__ == "__main__":
-    if not stdin.isatty():
-        for cmd in stdin:
-            HBNBCommand().onecmd(cmd.strip())
-    else:
-        HBNBCommand().cmdloop()
+    HBNBCommand().cmdloop()
