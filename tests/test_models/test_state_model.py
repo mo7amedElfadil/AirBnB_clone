@@ -23,14 +23,14 @@ class TestStateDocPep8(unittest.TestCase):
     """unittest class for Base class documentation and pep8 conformaty"""
     def test_pep8_state(self) -> None:
         """Test that the state_module conforms to PEP8."""
-        style = pep8.StyleGuide()
+        style = pep8.StyleGuide(quiet=True)
         result = style.check_files(['models/state.py'])
         self.assertEqual(result.total_errors, 0,
                          "Found code style errors (and warnings).")
 
     def test_pep8_test_state(self) -> None:
         """Test that the test_state_module conforms to PEP8."""
-        style = pep8.StyleGuide()
+        style = pep8.StyleGuide(quiet=True)
         result = style.check_files(['tests/test_models/test_state_model.py'])
         self.assertEqual(result.total_errors, 0,
                          "Found code style errors (and warnings).")

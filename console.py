@@ -108,7 +108,8 @@ class HBNBCommand(cmd.Cmd):
                 else:
                     # id, attribute, value
                     uvp_match = uvp.match(clean)
-                    res.extend(uvp_match.group().split(','))
+                    if uvp_match and len(uvp_match.groups()) == 3:
+                        res.extend(uvp_match.group().split(','))
                     return " ".join(res)
             else:
                 return " ".join(arg_list)
@@ -197,10 +198,10 @@ class HBNBCommand(cmd.Cmd):
         """
 
         args = shlex.split(arg)
-        key = args[0] + "." + args[1]
 
         if not (self.validate_cls(args) and self.validate_id(args)):
             return
+        key = args[0] + "." + args[1]
         if len(args) < 3:
             print("** attribute name missing **")
             return
