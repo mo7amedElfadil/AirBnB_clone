@@ -1,11 +1,15 @@
 #!/usr/bin/python3
 """
 Entry point into the AirBnB console app
+TODO update docs
 """
 import shlex
 import cmd
 import re
+<<<<<<< HEAD
 from sys import stdin
+=======
+>>>>>>> main
 from json import loads
 from json.decoder import JSONDecodeError
 from typing import Union
@@ -43,8 +47,15 @@ class HBNBCommand(cmd.Cmd):
     float_attr = ["latitude", "longitude"]
 
     patterns = {"all": re.compile(r'(.*)\.(.*)\((.*)\)'),
+<<<<<<< HEAD
                 "update": [re.compile(r'^(.+)\,(.+)\,(.+)$'),
                            re.compile(r'^"?([^"]+)"?\,\s*(\{.+\})$'),
+=======
+
+                # id, attribute, value
+                "update": [re.compile(r'^(.+)\,(.+)\,(.+)$'),
+                           re.compile(r'^[\'\"]?([^"]+)[\'\"]?\,\s*(\{.+\})$'),
+>>>>>>> main
                            re.compile(r"[\'\"](.*?)[\'\"]")]}
 
     # pylint: disable-next=unused-argument
@@ -53,6 +64,7 @@ class HBNBCommand(cmd.Cmd):
         """
         return True
 
+<<<<<<< HEAD
     def do_create(self, arg):
         """
         create command to create new instance of BaseModel
@@ -151,14 +163,31 @@ class HBNBCommand(cmd.Cmd):
 
     do_EOF = do_quit
     do_q = do_quit
+=======
+    # pylint: disable-next=unused-argument
+    def do_EOF(self, arg) -> bool:
+        """EOF or Ctrl-D command to exit the program
+        """
+        return True
+
+    def emptyline(self) -> bool:
+        """Empty line should do nothing"""
+        return False
+>>>>>>> main
 
     def precmd(self, line) -> str:
         """parse command line and determine if reformatting is needed.
         Helps handle call to commands using Class.command("values"),
         By splitting it to match the format of the do_cmd
         Ex:
+<<<<<<< HEAD
         User.update(<ID>, <attribute>, <value>)
         update User <ID> <attribute> <value>
+=======
+        $ update User <ID> <attribute> <value>
+        $ User.update(<ID>, <attribute>, <value>)
+        $ User.update(<ID>, {<attribute1>: <value1>, <attribute2>: <value2>})
+>>>>>>> main
         """
         # class.command(data)
         pattern = self.patterns
@@ -187,14 +216,24 @@ class HBNBCommand(cmd.Cmd):
                             # command class id attribute value
                             self.onecmd(" ".join(res +
                                                  [uvp_match.group(1),
+<<<<<<< HEAD
                                                   str(k), str(v)]))
+=======
+                                                  '"' + str(k) + '"',
+                                                  '"' + str(v) + '"']))
+>>>>>>> main
                         return ""
                     except JSONDecodeError:
                         pass
                 else:
                     # id, attribute, value
                     uvp_match = uvp.match(clean)
+<<<<<<< HEAD
                     res.extend(uvp_match.group().split(','))
+=======
+                    if uvp_match and len(uvp_match.groups()) == 3:
+                        res.extend(uvp_match.group().split(','))
+>>>>>>> main
                     return " ".join(res)
             else:
                 return " ".join(arg_list)
@@ -204,6 +243,11 @@ class HBNBCommand(cmd.Cmd):
         """Create a new instance of a class, save it, print its id
         Ex:
         $ create BaseModel
+<<<<<<< HEAD
+=======
+        $ <class name>.create()
+        $ User.create()
+>>>>>>> main
         """
         args = shlex.split(arg)
         if not self.validate_cls(args):
@@ -217,6 +261,11 @@ class HBNBCommand(cmd.Cmd):
         based on the class name and id
         Ex:
         $ show BaseModel 1234-1234-1234
+<<<<<<< HEAD
+=======
+        $ <class name>.show(id)
+        $ BaseModel.show(1234-1234-1234)
+>>>>>>> main
         """
         args = shlex.split(arg)
         if not (self.validate_cls(args) and self.validate_id(args)):
@@ -228,6 +277,11 @@ class HBNBCommand(cmd.Cmd):
         (save the change into the JSON file)
         Ex:
         $ destroy BaseModel 1234-1234-1234
+<<<<<<< HEAD
+=======
+        $ <class name>.destroy(id)
+        $ BaseModel.destroy(1234-1234-1234)
+>>>>>>> main
         """
         args = shlex.split(arg)
         if not (self.validate_cls(args) and self.validate_id(args)):
@@ -239,10 +293,19 @@ class HBNBCommand(cmd.Cmd):
         """Count all occurences of class instances
         Ex:
         $ count BaseModel
+<<<<<<< HEAD
         or
         $ BaseModel.count()
         """
         args = shlex.split(arg)
+=======
+        $ BaseModel.count()
+        """
+        args = shlex.split(arg)
+
+        if not self.validate_cls(args):
+            return
+>>>>>>> main
         res = 0
         if len(args) > 0:
             for k in storage.all():
@@ -254,13 +317,25 @@ class HBNBCommand(cmd.Cmd):
         """Prints all string representation of all instances
         based or not on the class name
         Ex:
+<<<<<<< HEAD
         $ all BaseModel
         or
         $ all
+=======
+        $ all
+        $ all BaseModel
+        $ <class name>.all()
+        $ BaseModel.all()
+>>>>>>> main
         """
         args = shlex.split(arg)
         res = []
         if len(args) > 0:
+<<<<<<< HEAD
+=======
+            if not self.validate_cls(args):
+                return
+>>>>>>> main
             for k, v in storage.all().items():
                 if args[0] == k.split(".")[0]:
                     res.append(str(v))
@@ -274,17 +349,32 @@ class HBNBCommand(cmd.Cmd):
         by adding or updating attribute (save the change into the JSON file).
         update <class name> <id> <attribute name> "<attribute value>"
         Ex:
+<<<<<<< HEAD
         $ update BaseModel 1234-1234-1234 email "aibnb@mail.com"
         """
         args = shlex.split(arg)
         if not (self.validate_cls(args) and self.validate_id(args)):
             return
+=======
+        $ update BaseModel 1234-1234-1234 email "aibnb@mail.com" 
+        $ update User <ID> <attribute> <value>
+        $ User.update(<ID>, <attribute>, <value>)
+        $ User.update(<ID>, {<attribute1>: <value1>, <attribute2>: <value2>})
+        """
+
+        args = shlex.split(arg)
+
+        if not (self.validate_cls(args) and self.validate_id(args)):
+            return
+        key = args[0] + "." + args[1]
+>>>>>>> main
         if len(args) < 3:
             print("** attribute name missing **")
             return
         if len(args) < 4:
             print("** value missing **")
             return
+<<<<<<< HEAD
         if args[3].startswith(("'", '"')) and args[3].endswith(("'", '"')):
             match = self.patterns["update"][2].match(args[3]).group(1)
         else:
@@ -301,6 +391,25 @@ class HBNBCommand(cmd.Cmd):
         else:
             setattr(storage.all()[args[0] + "." + args[1]],
                     args[2], self.type_cast(match))
+=======
+
+        # if args[3].startswith(("'", '"')) and args[3].endswith(("'", '"')):
+            # match = self.patterns["update"][2].match(args[3]).group(1)
+        # else:
+        match = args[3]
+
+        instance = storage.all()[key]
+
+        if args[2] in self.int_attr:
+            setattr(instance,
+                    args[2], int(match))
+        elif args[2] in self.str_attr:
+            setattr(instance, args[2], str(match))
+        elif args[2] in self.float_attr:
+            setattr(instance, args[2], float(match))
+        else:
+            setattr(instance, args[2], self.type_cast(match))
+>>>>>>> main
         storage.save()
 
     def type_cast(self, arg) -> Union[float, int, str]:

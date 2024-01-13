@@ -43,7 +43,15 @@ class FileStorage:
     """
     __file_path = "file.json"
     __objects = {}
-
+    __models = {
+        "BaseModel": BaseModel,
+        "User": User,
+        "State": State,
+        "City": City,
+        "Amenity": Amenity,
+        "Place": Place,
+        "Review": Review
+        }
 
     def all(self) -> dict:
         """returns the dictionary __objects
@@ -59,7 +67,11 @@ class FileStorage:
         """serializes __objects to the JSON file (path: __file_path)
         """
         save_data = {}
+<<<<<<< HEAD
         for k, v in  self.__objects.items():
+=======
+        for k, v in self.__objects.items():
+>>>>>>> main
             save_data[k] = v.to_dict()
         try:
             with open(self.__file_path, "w", encoding="utf-8") as f:
@@ -76,7 +88,11 @@ class FileStorage:
             with open(self.__file_path, "r", encoding="utf-8") as f:
                 for k, v in load(f).items():
                     try:
+<<<<<<< HEAD
                         self.__objects[k] = models[k.split(".")[0]](**v)
+=======
+                        self.__objects[k] = self.__models[k.split(".")[0]](**v)
+>>>>>>> main
                     except IndexError:
                         continue
         except (IOError, JSONDecodeError):

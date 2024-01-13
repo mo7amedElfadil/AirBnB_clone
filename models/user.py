@@ -4,6 +4,10 @@ Inherits from BaseModel class
 """
 from models.base_model import BaseModel
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> main
 class User(BaseModel):
     """User class
 
