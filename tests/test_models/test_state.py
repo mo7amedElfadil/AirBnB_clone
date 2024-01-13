@@ -31,7 +31,7 @@ class TestStateDocPep8(unittest.TestCase):
     def test_pep8_test_state(self) -> None:
         """Test that the test_state_module conforms to PEP8."""
         style = pep8.StyleGuide(quiet=True)
-        result = style.check_files(['tests/test_models/test_state_model.py'])
+        result = style.check_files(['tests/test_models/test_state.py'])
         self.assertEqual(result.total_errors, 0,
                          "Found code style errors (and warnings).")
 
