@@ -7,7 +7,8 @@ import unittest
 from unittest.mock import patch
 from json import load
 import inspect  # test function and module doc string
-import pep8  # test pep8 conformance
+# import pep8  # test pep8 conformance
+import pycodestyle as pep8
 from models.engine.file_storage import FileStorage
 import models.engine.file_storage as file_storage
 from models import storage

@@ -4,7 +4,7 @@ file name: test_console.py
 """
 import unittest
 import inspect  # test function and module doc string
-import pep8  # test pep8 conformance
+import pycodestyle as pep8
 # from json import dumps, loads #to test the de/serialization
 import console
 from console import HBNBCommand
@@ -24,17 +24,6 @@ from models.review import Review
 class TestBaseModelDocPep8(unittest.TestCase):
     """unittest class for HBNBCommand class
     documentation and pep8 conformaty"""
-
-    """_models = {
-        "BaseModel": BaseModel,
-        "User": User,
-        "State": State,
-        "City": City,
-        "Amenity": Amenity,
-        "Place": Place,
-        "Review": Review
-    }
-    """
 
     def test_pep8_base(self):
         """Test that the base_module conforms to PEP8."""
@@ -69,7 +58,7 @@ class TestBaseModelDocPep8(unittest.TestCase):
 
 
 class TestHBNBCommandClassWorking(unittest.TestCase):
-    """unittest class for BaseModel class when everything works
+    """unittest class for HBNBCommand class when everything works
     """
     def setUp(self):
         """ instanciate widely used variables
@@ -105,14 +94,10 @@ class TestHBNBCommandClassWorking(unittest.TestCase):
     def test_create_User(self):
         """test create() on User class
         """
-        self.id_pattern = re.compile(r'^[0-9a-fA-F]{8}-' +
-                                     r'[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a' +
-                                     r'-fA-F]{4}-[0-9a-fA-F]{12}$')
+
         with patch('sys.stdout', new=StringIO()) as f:
             HBNBCommand().onecmd("create User")
-            re_match = re.compile(r'^([0-9a-fA-F]{8}-' +
-                                  r'[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a' +
-                                  r'-fA-F]{4}-[0-9a-fA-F]{12})$')
+            re_match = self.id_pattern
             # TODO: test that the file includes the created instance
             value = f.getvalue().strip()
             res = re_match.match(value).group().strip()
@@ -367,7 +352,7 @@ class TestHBNBCommandClassWorking(unittest.TestCase):
 
 
 class TestHBNBCommandClassBreaking(unittest.TestCase):
-    """unittest class for BaseModel class when everything breaks"""
+    """unittest class for HBNBCommand class when everything breaks"""
     def test_create_no_arguments(self):
         """test create with no arguments"""
         with patch('sys.stdout', new=StringIO()) as f:

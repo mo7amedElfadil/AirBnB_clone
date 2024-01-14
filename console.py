@@ -111,6 +111,8 @@ class HBNBCommand(cmd.Cmd):
                     uvp_match = uvp.match(clean)
                     if uvp_match and len(uvp_match.groups()) == 3:
                         res.extend(uvp_match.group().split(','))
+                    else:
+                        res.append(clean)
                     return " ".join(res)
             else:
                 return " ".join(arg_list)
