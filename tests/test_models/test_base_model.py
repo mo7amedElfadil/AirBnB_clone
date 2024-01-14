@@ -261,6 +261,5 @@ class TestBaseModelClassWorking(unittest.TestCase):
     def tearDown(self) -> None:
         """Tear down instances and variables"""
         for instance in self.instances:
-            del storage.all()[instance.__class__.__name__ +
-                              "." + instance.id]
+            del storage.all()[f"{instance.__class__.__name__}.{instance.id}"]
         storage.save()
