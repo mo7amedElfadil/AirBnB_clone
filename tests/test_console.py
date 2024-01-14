@@ -68,21 +68,11 @@ class TestHBNBCommandClassWorking(unittest.TestCase):
                                      r'-fA-F]{4}-[0-9a-fA-F]{12}$')
         self.str_pattern = re.compile(r'\[([^]]+)\] \(([^)]+)\) (.+)')
         self.show_pattern = re.compile(r'(\[([^]]+)\] \(([^)]+)\) (\{.+\}))')
+        self.classes = {"BaseModel": BaseModel, "User": User,
+                        "State": State, "City": City,
+                        "Amenity": Amenity, "Place": Place,
+                        "Review": Review}
         self.instances = []
-        self.cls = BaseModel()
-        self.instances.append(self.cls)
-        self.usr = User()
-        self.instances.append(self.usr)
-        self.stt = State()
-        self.instances.append(self.stt)
-        self.ct = City()
-        self.instances.append(self.ct)
-        self.amnty = Amenity()
-        self.instances.append(self.amnty)
-        self.plc = Place()
-        self.instances.append(self.plc)
-        self.rvw = Review()
-        self.instances.append(self.rvw)
 
     def tearDown(self) -> None:
         """Tear down instances and variables"""
@@ -90,23 +80,35 @@ class TestHBNBCommandClassWorking(unittest.TestCase):
             del storage.all()[instance.__class__.__name__ +
                               "." + instance.id]
         storage.save()
+    
+    def test_create(self):
+        """test create <class>
+        """
+        for k in self.classes:
+            with patch('sys.stdout', new=StringIO()) as f:
+                HBNBCommand().onecmd(f"create {k}")
+                re_match = self.id_pattern
+                # TODO: test that the file includes the created instance
+                value = f.getvalue().strip()
+                res = re_match.match(value).group().strip()
+                key = f"{k}." + res
+                self.instances.append(storage.all()[key])
+                self.assertIn(key, storage.all())
+                self.assertEqual(value, res)
+
 
     def test_create_User(self):
         """test create() on User class
         """
-
         with patch('sys.stdout', new=StringIO()) as f:
             HBNBCommand().onecmd("create User")
             re_match = self.id_pattern
             # TODO: test that the file includes the created instance
             value = f.getvalue().strip()
             res = re_match.match(value).group().strip()
-            print("Expected pattern:", re_match.pattern)
-
             key = "User." + res
             self.instances.append(storage.all()[key])
             self.assertIn(key, storage.all())
-
             self.assertEqual(value, res)
 
     def test_create_BaseModel(self):
@@ -120,11 +122,9 @@ class TestHBNBCommandClassWorking(unittest.TestCase):
             value = f.getvalue().strip()
             res = re_match.match(value).group().strip()
             # print("Expected pattern:", re_match.pattern)
-
             key = "BaseModel." + res
             self.instances.append(storage.all()[key])
             self.assertIn(key, storage.all())
-
             self.assertEqual(value, res)
 
     def test_create_State(self):
@@ -220,7 +220,8 @@ class TestHBNBCommandClassWorking(unittest.TestCase):
     def test_show_BaseModel(self):
         """test show() on BaseModel
         """
-        base_model = self.cls
+        base_model = self.classes["BaseModel"]()
+        self.instances.append(base_model)
         with patch('sys.stdout', new=StringIO()) as f:
             HBNBCommand().onecmd("show BaseModel " + base_model.id)
             f_value = f.getvalue().strip()
@@ -236,7 +237,8 @@ class TestHBNBCommandClassWorking(unittest.TestCase):
     def test_show_User(self):
         """test show() on User
         """
-        user = self.usr
+        user = self.classes["User"]()
+        self.instances.append(user)
         with patch('sys.stdout', new=StringIO()) as f:
             HBNBCommand().onecmd("show User " + user.id)
             f_value = f.getvalue().strip()
@@ -252,7 +254,8 @@ class TestHBNBCommandClassWorking(unittest.TestCase):
     def test_show_State(self):
         """test show() on State
         """
-        state = self.stt
+        state = self.classes["State"]()
+        self.instances.append(state)
         with patch('sys.stdout', new=StringIO()) as f:
             HBNBCommand().onecmd("show State " + state.id)
             f_value = f.getvalue().strip()
@@ -268,7 +271,8 @@ class TestHBNBCommandClassWorking(unittest.TestCase):
     def test_show_City(self):
         """test show() on City
         """
-        city = self.ct
+        city = self.classes["City"]()
+        self.instances.append(city)
         with patch('sys.stdout', new=StringIO()) as f:
             HBNBCommand().onecmd("show City " + city.id)
             f_value = f.getvalue().strip()
@@ -284,7 +288,8 @@ class TestHBNBCommandClassWorking(unittest.TestCase):
     def test_show_Amenity(self):
         """test show() on Amenity
         """
-        amenity = self.amnty
+        amenity = self.classes["Amenity"]()
+        self.instances.append(amenity)
         with patch('sys.stdout', new=StringIO()) as f:
             HBNBCommand().onecmd("show Amenity " + amenity.id)
             f_value = f.getvalue().strip()
@@ -300,7 +305,8 @@ class TestHBNBCommandClassWorking(unittest.TestCase):
     def test_show_Place(self):
         """test show() on Place
         """
-        place = self.plc
+        place = self.classes["Place"]()
+        self.instances.append(place)
         with patch('sys.stdout', new=StringIO()) as f:
             HBNBCommand().onecmd("show Place " + place.id)
             f_value = f.getvalue().strip()
@@ -316,7 +322,8 @@ class TestHBNBCommandClassWorking(unittest.TestCase):
     def test_show_Review(self):
         """test show() on Review
         """
-        review = self.rvw
+        review = self.classes["Review"]()
+        self.instances.append(review)
         with patch('sys.stdout', new=StringIO()) as f:
             HBNBCommand().onecmd("show Review " + review.id)
             f_value = f.getvalue().strip()
@@ -338,17 +345,30 @@ class TestHBNBCommandClassWorking(unittest.TestCase):
             for v in storage.all().values():
                 self.assertIn(str(v), f_value)
 
-    def test_User_all(self):
-        """test User.all()
+    def test_all_class(self):
+        """test all class_name
         """
-        with patch('sys.stdout', new=StringIO()) as f:
-            HBNBCommand().onecmd("all BaseModel")
-            res = []
-            for k, v in storage.all().items():
-                if "BaseModel" == k.split(".")[0]:
-                    res.append(str(v))
-            f_value = f.getvalue().strip()
-            self.assertEqual(str(res), f_value)
+        for cls_name in self.classes:
+            with patch('sys.stdout', new=StringIO()) as f:
+                HBNBCommand().onecmd(f"all {cls_name}")
+                res = []
+                for k, v in storage.all().items():
+                    if cls_name == k.split(".")[0]:
+                        res.append(str(v))
+                f_value = f.getvalue().strip()
+                self.assertEqual(str(res), f_value)
+
+    def test_class_all(self):
+        """test all class_name
+        """
+        for cls_name in self.classes:
+            with patch('sys.stdout', new=StringIO()) as f:
+                HBNBCommand().precmd(f"{cls_name}.all()")
+                f_value = f.getvalue().strip()
+                for k, v in storage.all().items():
+                    if cls_name == k.split(".")[0]:
+                        self.assertIn(str(v), str(f_value))
+            print(f_value)
 
 
 class TestHBNBCommandClassBreaking(unittest.TestCase):
