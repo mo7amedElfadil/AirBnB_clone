@@ -201,7 +201,7 @@ class HBNBCommand(cmd.Cmd):
         by adding or updating attribute (save the change into the JSON file).
         update <class name> <id> <attribute name> "<attribute value>"
         Ex:
-        $ update BaseModel 1234-1234-1234 email "aibnb@mail.com" 
+        $ update BaseModel 1234-1234-1234 email "aibnb@mail.com"
         $ update User <ID> <attribute> <value>
         $ User.update(<ID>, <attribute>, <value>)
         $ User.update(<ID>, {<attribute1>: <value1>, <attribute2>: <value2>})
