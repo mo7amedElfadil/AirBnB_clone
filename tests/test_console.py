@@ -333,6 +333,15 @@ class TestHBNBCommandClassWorking(unittest.TestCase):
             f_value = f.getvalue().strip()
             for v in storage.all().values():
                 self.assertIn(str(v), f_value)
+
+    def test_User_all(self):
+        """test User.all()
+        """ 
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("BaseModel.all()")
+            f_value = f.getvalue().strip()
+            for v in storage.all().values():
+                self.assertIn(f_value, str(v))
             
 
 
