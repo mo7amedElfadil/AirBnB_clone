@@ -81,6 +81,12 @@ class TestHBNBCommandClassWorking(unittest.TestCase):
         self.show_pattern = re.compile(r'(\[([^]]+)\] \(([^)]+)\) (\{.+\}))')
         
         self.cls = BaseModel()
+        self.usr = User()
+        self.stt = State()
+        self.ct = City()
+        self.amnty = Amenity()
+        self.plc = Place()
+        self.rvw = Review()
 
 
     def test_create_User(self):
@@ -223,7 +229,103 @@ class TestHBNBCommandClassWorking(unittest.TestCase):
             self.assertIn(key, storage.all())
             self.assertEqual(f_value, s_patt)
 
-    def test_all_BaseModel(self):
+    def test_show_User(self):
+        """test show() on User
+        """
+        user = self.usr
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("show User " + user.id )
+            f_value = f.getvalue().strip()
+            patt = self.show_pattern
+            s_patt = patt.match(f_value).group().strip()
+
+            key = "User." + user.id
+            # value = storage.all()[key]
+
+            self.assertIn(key, storage.all())
+            self.assertEqual(f_value, s_patt)
+
+    def test_show_State(self):
+        """test show() on State
+        """
+        state = self.stt
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("show State " + state.id )
+            f_value = f.getvalue().strip()
+            patt = self.show_pattern
+            s_patt = patt.match(f_value).group().strip()
+
+            key = "State." + state.id
+            # value = storage.all()[key]
+
+            self.assertIn(key, storage.all())
+            self.assertEqual(f_value, s_patt)
+
+    def test_show_City(self):
+        """test show() on City
+        """
+        city = self.ct
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("show City " + city.id )
+            f_value = f.getvalue().strip()
+            patt = self.show_pattern
+            s_patt = patt.match(f_value).group().strip()
+
+            key = "City." + city.id
+            # value = storage.all()[key]
+
+            self.assertIn(key, storage.all())
+            self.assertEqual(f_value, s_patt)
+
+    def test_show_Amenity(self):
+        """test show() on Amenity
+        """
+        amenity = self.amnty
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("show Amenity " + amenity.id )
+            f_value = f.getvalue().strip()
+            patt = self.show_pattern
+            s_patt = patt.match(f_value).group().strip()
+
+            key = "Amenity." + amenity.id
+            # value = storage.all()[key]
+
+            self.assertIn(key, storage.all())
+            self.assertEqual(f_value, s_patt)
+
+    def test_show_Place(self):
+        """test show() on Place
+        """
+        place = self.plc
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("show Place " + place.id )
+            f_value = f.getvalue().strip()
+            patt = self.show_pattern
+            s_patt = patt.match(f_value).group().strip()
+
+            key = "Place." + place.id
+            # value = storage.all()[key]
+
+            self.assertIn(key, storage.all())
+            self.assertEqual(f_value, s_patt)
+
+    def test_show_Review(self):
+        """test show() on Review
+        """
+        review = self.rvw
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("show Review " + review.id )
+            f_value = f.getvalue().strip()
+            patt = self.show_pattern
+            s_patt = patt.match(f_value).group().strip()
+
+            key = "Review." + review.id
+            # value = storage.all()[key]
+
+            self.assertIn(key, storage.all())
+            self.assertEqual(f_value, s_patt)
+
+    def test_all(self):
         """test all() on BaseModel
         """ 
         with patch('sys.stdout', new=StringIO()) as f:
@@ -231,7 +333,7 @@ class TestHBNBCommandClassWorking(unittest.TestCase):
             f_value = f.getvalue().strip()
             for v in storage.all().values():
                 self.assertIn(str(v), f_value)
-            # self.assertEqual(f_value, storage.all())
+            
 
 
 
