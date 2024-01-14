@@ -342,11 +342,37 @@ class TestHBNBCommandClassWorking(unittest.TestCase):
             f_value = f.getvalue().strip()
             for v in storage.all().values():
                 self.assertIn(f_value, str(v))
-            
-
-
-
         
-# class TestHBNBCommandClassBreaking(unittest.TestCase):
-#     """unittest class for BaseModel class when everything breaks"""
-#     pass
+class TestHBNBCommandClassBreaking(unittest.TestCase):
+    """unittest class for BaseModel class when everything breaks"""
+    def test_create_no_arguments(self):
+        """test create with no arguments"""
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("create")
+            f_output = f.getvalue().strip()
+            cmd_output = "** class name missing **"
+            self.assertEqual(f_output, cmd_output)
+
+    def test_show_no_arguments(self):
+        """test show with no arguments"""
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("show")
+            f_output = f.getvalue().strip()
+            cmd_output = "** class name missing **"
+            self.assertEqual(f_output, cmd_output)
+
+    def test_show_no_id(self):
+        """test show with no id"""
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("Show BaseModel")
+            f_output = f.getvalue().strip()
+            cmd_output = "*** Unknown syntax: Show BaseModel"
+            self.assertEqual(f_output, cmd_output)
+
+    def test_update_no_arguments(self):
+        """test update with no arguments"""
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("update")
+            f_output = f.getvalue().strip()
+            cmd_output = "** class name missing **"
+            self.assertEqual(f_output, cmd_output)
