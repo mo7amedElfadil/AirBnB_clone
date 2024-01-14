@@ -12,7 +12,7 @@ from io import StringIO
 import inspect  # test function and module doc string
 import re
 from json import load  # , dump # to test the de/serialization
-import pep8  # test pep8 conformance
+import pycodestyle as pep8
 from models.base_model import BaseModel
 import models.base_model as base_model
 from models import storage
@@ -83,7 +83,6 @@ class TestBaseModelClassWorking(unittest.TestCase):
         """test the attributes of the instance of BaseModel
         """
         base = self.instances[0]
-
         self.assertIsInstance(base, BaseModel)
         self.assertTrue(hasattr(base, "id"))
         self.assertTrue(hasattr(base, "created_at"))
@@ -160,6 +159,7 @@ class TestBaseModelClassWorking(unittest.TestCase):
         self.assertEqual(base.to_dict(), kw_base.to_dict())
 
     def test_init_kwarg_creation_not_exist(self) -> None:
+
         """test creation of an instance of BaseModel using kwargs
         """
         kw_base = BaseModel(**self.fake_base)
@@ -187,6 +187,7 @@ class TestBaseModelClassWorking(unittest.TestCase):
         setattr(base, "last_name", "Elfadil")
         self.assertTrue(hasattr(base, "last_name"))
         self.assertTrue(hasattr(storage.all()[key], "last_name"))
+
         # test deleting
         del base.first_name
         self.assertFalse(hasattr(base, "first_name"))
@@ -214,7 +215,6 @@ class TestBaseModelClassWorking(unittest.TestCase):
         """test the FileStorage saving of the instance of BaseModel
         """
         base = self.instances[0]
-
         key = base.__class__.__name__ + "." + base.id
         # test saving
         old_updated = base.updated_at
@@ -261,6 +261,5 @@ class TestBaseModelClassWorking(unittest.TestCase):
     def tearDown(self) -> None:
         """Tear down instances and variables"""
         for instance in self.instances:
-            del storage.all()[instance.__class__.__name__ +
-                              "." + instance.id]
+            del storage.all()[f"{instance.__class__.__name__}.{instance.id}"]
         storage.save()

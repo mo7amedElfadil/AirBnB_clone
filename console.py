@@ -24,7 +24,6 @@ class HBNBCommand(cmd.Cmd):
     quit, EOF, help
     """
     prompt = "(hbnb) "
-    class_name = {'BaseModel': BaseModel}
 
     _models = {
         "BaseModel": BaseModel,
@@ -43,27 +42,7 @@ class HBNBCommand(cmd.Cmd):
     float_attr = ["latitude", "longitude"]
 
     patterns = {"all": re.compile(r'(.*)\.(.*)\((.*)\)'),
-                "update": [re.compile(r'^(.+)\,(.+)\,(.+)$'),
-                           re.compile(r'^"?([^"]+)"?\,\s*(\{.+\})$'),
-                           re.compile(r"[\'\"](.*?)[\'\"]")]}
 
-    _models = {
-        "BaseModel": BaseModel,
-        "User": User,
-        "State": State,
-        "City": City,
-        "Amenity": Amenity,
-        "Place": Place,
-        "Review": Review
-        }
-    str_attr = ["name", "amenity_id", "place_id", "state_id",
-                "user_id", "city_id", "description", "text",
-                "email", "password", "first_name", "last_name"]
-    int_attr = ["number_rooms", "number_bathrooms",
-                "max_guest", "price_by_night"]
-    float_attr = ["latitude", "longitude"]
-
-    patterns = {"all": re.compile(r'(.*)\.(.*)\((.*)\)'),
                 # id, attribute, value
                 "update": [re.compile(r'^(.+)\,(.+)\,(.+)$'),
                            re.compile(r'^[\'\"]?([^"]+)[\'\"]?\,\s*(\{.+\})$'),
@@ -75,103 +54,15 @@ class HBNBCommand(cmd.Cmd):
         """
         return True
 
-    def do_create(self, arg):
+    # pylint: disable-next=unused-argument
+    def do_EOF(self, arg) -> bool:
+        """EOF or Ctrl-D command to exit the program
         """
-        create command to create new instance of BaseModel
-        and save it as a json file
-        """
-        if not arg:
-            print("** class name is missing **")
-        elif arg not in self.class_name.keys():
-            print("** class doesn't exit **")
-        else:
-            new_instance = self.class_name[arg]()
-            # new_instance.to_json()
-            print(new_instance.id)
+        return True
 
-    def do_show(self, arg):
-        """
-        Show command to print the str representation of an instance
-        based on class name and id
-        """
-        argts = arg.split()
-        if not arg:
-            print("** class name missing **")
-            return
-        elif argts[0] != "BaseModel":
-            print("** class doesn't exit **")
-        elif len(argts) < 2:
-            print("** instance id is missing **")
-        elif argts[0]+"."+argts[1] not in\
-                models.storage._FileStorage__objects.keys():
-                    print("** no instance found **")
-        else:
-            new_instance = models.storage.all()[argts[0]+"."+argts[1]]
-            print(new_instance)
-
-    def do_destroy(self, arg):
-        """Destroy command to delete instances specified
-        based on class name and id
-        """
-        argts = arg.split()
-        if not arg:
-            print("** class name missing **")
-            return
-        if argts[0] not in self.class_name.keys():
-            print("** class doesn't exist **")
-        elif len(argts) == 1:
-            print("** instance id missing **")
-        elif argts[0]+"."+argts[1] not in\
-                models.storage._FileStorage__objects.keys():
-                    print("** no instance found **")
-        else:
-            del models.storage._FileStorage__objects[argts[0]+"."+argts[1]]
-            models.storage.save()
-
-    def do_all(self, arg):
-        """All command to print all string representatio of
-        every instance based on class name or no class name
-        """
-        all_cls = []
-        if arg and arg not in self.class_name.keys():
-            print("** class doesnt exist **")
-            return
-        for cls in models.storage._FileStorage__objects.keys():
-            all_cls.append(models.storage._FileStorage__objects[cls].__str__())
-
-        print('["{}"]'.format(", ".join(all_cls)))
-
-    def do_update(self, arg):
-        """Update command to update an instance
-        based on the class name and id
-        adding or updating the attribute
-        """
-        if not arg:
-            print("** class name is missing **")
-            return
-        argts = arg.split()
-        if argts[0] not in self.class_name.keys():
-            print("** class doesn't exist **")
-        elif len(argts) == 1:
-            print("** instance id missing **")
-        elif argts[0]+"."+argts[1] not in\
-                models.storage._FileStorage__objects.keys():
-                    print("** no instance found **")
-        elif len(argts) == 2:
-            print("** attribute name missing **")
-        elif len(argts) == 3:
-            print("** value missing **")
-        else:
-            instance = models.storage.all()[argts[0]+"."+argts[1]]
-            attr = argts[2]
-            val = argts[3]
-            setattr(instance, attr, val)
-            instance.save()
-            models.storage.save()
-
-        
-
-    do_EOF = do_quit
+    def emptyline(self) -> bool:
+        """Empty line should do nothing"""
+        return False
 
     def precmd(self, line) -> str:
         """parse command line and determine if reformatting is needed.
@@ -219,6 +110,8 @@ class HBNBCommand(cmd.Cmd):
                     uvp_match = uvp.match(clean)
                     if uvp_match and len(uvp_match.groups()) == 3:
                         res.extend(uvp_match.group().split(','))
+                    else:
+                        res.append(clean)
                     return " ".join(res)
             else:
                 return " ".join(arg_list)
@@ -272,6 +165,7 @@ class HBNBCommand(cmd.Cmd):
         $ BaseModel.count()
         """
         args = shlex.split(arg)
+
         if not self.validate_cls(args):
             return
         res = 0
@@ -295,6 +189,8 @@ class HBNBCommand(cmd.Cmd):
             return
         res = []
         if len(args) > 0:
+            if not self.validate_cls(args):
+                return
             for k, v in storage.all().items():
                 if args[0] == k.split(".")[0]:
                     res.append(str(v))
@@ -313,6 +209,7 @@ class HBNBCommand(cmd.Cmd):
         $ User.update(<ID>, <attribute>, <value>)
         $ User.update(<ID>, {<attribute1>: <value1>, <attribute2>: <value2>})
         """
+
         args = shlex.split(arg)
 
         if not (self.validate_cls(args) and self.validate_id(args)):
@@ -324,10 +221,12 @@ class HBNBCommand(cmd.Cmd):
         if len(args) < 4:
             print("** value missing **")
             return
+
         # if args[3].startswith(("'", '"')) and args[3].endswith(("'", '"')):
             # match = self.patterns["update"][2].match(args[3]).group(1)
         # else:
         match = args[3]
+
         instance = storage.all()[key]
 
         if args[2] in self.int_attr:

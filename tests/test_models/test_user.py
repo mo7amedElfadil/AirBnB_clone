@@ -12,7 +12,7 @@ from io import StringIO
 import inspect  # test function and module doc string
 import re
 from json import load  # , dump # to test the de/serialization
-import pep8  # test pep8 conformance
+import pycodestyle as pep8
 from models.user import User
 from models.base_model import BaseModel
 import models.user as user_model
