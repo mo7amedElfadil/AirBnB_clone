@@ -186,8 +186,6 @@ class HBNBCommand(cmd.Cmd):
         $ BaseModel.all()
         """
         args = shlex.split(arg)
-        if not self.validate_cls(args):
-            return
         res = []
         if len(args) > 0:
             if not self.validate_cls(args):
