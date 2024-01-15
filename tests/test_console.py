@@ -248,7 +248,7 @@ EOF  all  create  destroy  help  quit  show  update''', f_value)
         """test all
         """
         with patch('sys.stdout', new=StringIO()) as f:
-            HBNBCommand().onecmd(f"all")
+            HBNBCommand().onecmd("all")
             # convert str list to list
             if f.getvalue().strip() != "[]":
                 self.assertRegex(f.getvalue().strip(), self.show_pattern)
@@ -260,7 +260,8 @@ EOF  all  create  destroy  help  quit  show  update''', f_value)
         """
         for k in self.classes:
             with patch('sys.stdout', new=StringIO()) as f:
-                HBNBCommand().onecmd(HBNBCommand().precmd(f"{k}.all()"))
+                line = HBNBCommand().precmd(f"{k}.all()")
+                self.assertFalse(HBNBCommand().onecmd(line))
                 # convert str list to list
                 if f.getvalue().strip() != "[]":
                     self.assertRegex(f.getvalue().strip(), self.show_pattern)
@@ -271,7 +272,8 @@ EOF  all  create  destroy  help  quit  show  update''', f_value)
         """Test BaseModel.all()
         """
         with patch('sys.stdout', new=StringIO()) as f:
-            HBNBCommand().onecmd(HBNBCommand().precmd("BaseModel.all()"))
+            line = HBNBCommand().precmd("BaseModel.all()")
+            self.assertFalse(HBNBCommand().onecmd(line))
             if f.getvalue().strip() != "[]":
                 self.assertRegex(f.getvalue().strip(), self.show_pattern)
             else:
@@ -1248,7 +1250,7 @@ EOF  all  create  destroy  help  quit  show  update''', f_value)
         """test BaseModel.update(<id>, <attribute>, <value>)
         """
         with patch('sys.stdout', new=StringIO()) as f:
-            HBNBCommand().onecmd(f"create BaseModel")
+            HBNBCommand().onecmd("create BaseModel")
             f_value = f.getvalue().strip()
             key = f"BaseModel.{f_value}"
             self.assertIn(key, storage.all())
@@ -1265,7 +1267,7 @@ EOF  all  create  destroy  help  quit  show  update''', f_value)
         """test User.update(<id>, <attribute>, <value>)
         """
         with patch('sys.stdout', new=StringIO()) as f:
-            HBNBCommand().onecmd(f"create User")
+            HBNBCommand().onecmd("create User")
             f_value = f.getvalue().strip()
             key = f"User.{f_value}"
             self.assertIn(key, storage.all())
@@ -1282,7 +1284,7 @@ EOF  all  create  destroy  help  quit  show  update''', f_value)
         """test State.update(<id>, <attribute>, <value>)
         """
         with patch('sys.stdout', new=StringIO()) as f:
-            HBNBCommand().onecmd(f"create State")
+            HBNBCommand().onecmd("create State")
             f_value = f.getvalue().strip()
             key = f"State.{f_value}"
             self.assertIn(key, storage.all())
@@ -1299,7 +1301,7 @@ EOF  all  create  destroy  help  quit  show  update''', f_value)
         """test City.update(<id>, <attribute>, <value>)
         """
         with patch('sys.stdout', new=StringIO()) as f:
-            HBNBCommand().onecmd(f"create City")
+            HBNBCommand().onecmd("create City")
             f_value = f.getvalue().strip()
             key = f"City.{f_value}"
             self.assertIn(key, storage.all())
@@ -1316,7 +1318,7 @@ EOF  all  create  destroy  help  quit  show  update''', f_value)
         """test Amenity.update(<id>, <attribute>, <value>)
         """
         with patch('sys.stdout', new=StringIO()) as f:
-            HBNBCommand().onecmd(f"create Amenity")
+            HBNBCommand().onecmd("create Amenity")
             f_value = f.getvalue().strip()
             key = f"Amenity.{f_value}"
             self.assertIn(key, storage.all())
@@ -1333,7 +1335,7 @@ EOF  all  create  destroy  help  quit  show  update''', f_value)
         """test Place.update(<id>, <attribute>, <value>)
         """
         with patch('sys.stdout', new=StringIO()) as f:
-            HBNBCommand().onecmd(f"create Place")
+            HBNBCommand().onecmd("create Place")
             f_value = f.getvalue().strip()
             key = f"Place.{f_value}"
             self.assertIn(key, storage.all())
@@ -1350,7 +1352,7 @@ EOF  all  create  destroy  help  quit  show  update''', f_value)
         """test Review.update(<id>, <attribute>, <value>)
         """
         with patch('sys.stdout', new=StringIO()) as f:
-            HBNBCommand().onecmd(f"create Review")
+            HBNBCommand().onecmd("create Review")
             f_value = f.getvalue().strip()
             key = f"Review.{f_value}"
             self.assertIn(key, storage.all())
