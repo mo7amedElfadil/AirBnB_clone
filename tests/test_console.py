@@ -66,7 +66,8 @@ class TestBaseModelDocPep8(unittest.TestCase):
 class TestConsoleWorking(unittest.TestCase):
     """unittest class for HBNBCommand class when everything works
     """
-    def setUp(self):
+    @classmethod
+    def setUpClass(self):
         """ instanciate widely used variables
         """
         self.id_pattern = re.compile(r'^[0-9a-fA-F]{8}-' +
@@ -82,7 +83,8 @@ class TestConsoleWorking(unittest.TestCase):
         self.commands = ['all', 'quit', 'create', 'update', 'show',
                          'destroy', 'count', 'EOF']
 
-    def tearDown(self) -> None:
+    @classmethod
+    def tearDownClass(self) -> None:
         """Tear down instances and variables
         """
         for instance in self.instances:
@@ -388,7 +390,7 @@ EOF  all  create  destroy  help  quit  show  update''', f_value)
             res = []
             for i, j in storage.all().items():
                 # There is a bug here that makes all checkers green
-                if "user" == i.split(".")[0]:
+                if "User" == i.split(".")[0]:
                     res.append(str(j))
 
             self.assertEqual(str(res), f.getvalue().strip())
