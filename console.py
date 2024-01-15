@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 """
 Entry point into the AirBnB console app
-TODO update docs
 """
 import shlex
 import cmd
@@ -51,7 +50,7 @@ class HBNBCommand(cmd.Cmd):
 
     # pylint: disable-next=unused-argument
     def do_quit(self, arg) -> bool:
-        """Quit command to exit the program
+        """quit command to exit the program
         """
         return True
 

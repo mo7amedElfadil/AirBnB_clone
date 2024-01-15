@@ -79,6 +79,8 @@ class TestHBNBCommandClassWorking(unittest.TestCase):
                         "Amenity": Amenity, "Place": Place,
                         "Review": Review}
         self.instances = []
+        self.commands = ['all', 'quit', 'create', 'update', 'show',
+                         'destroy', 'count', 'EOF']
 
     def tearDown(self) -> None:
         """Tear down instances and variables
@@ -87,6 +89,35 @@ class TestHBNBCommandClassWorking(unittest.TestCase):
             del storage.all()[instance.__class__.__name__ +
                               "." + instance.id]
         storage.save()
+
+    def test_methods(self):
+        """test methods
+        """
+        for k in self.commands:
+            if k != 'count':
+                self.assertIn(f"do_{k}", HBNBCommand.__dict__.keys())
+            else:
+                self.assertIn(f"{k}", HBNBCommand.__dict__.keys())
+
+    def test_help(self):
+        """test help command.
+        """
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("help")
+            f_value = f.getvalue().strip()
+            self.assertIn('''Documented commands (type help <topic>):
+========================================
+EOF  all  create  destroy  help  quit  show  update''', f_value)
+
+    def test_help_command(self):
+        """test help <topic> command.
+        """
+        for k in self.commands:
+            with patch('sys.stdout', new=StringIO()) as f:
+                HBNBCommand().onecmd(f"help {k}")
+                f_value = f.getvalue().strip()
+                self.assertIn(k, f_value)
+                self.assertTrue(len(f_value) > 0)
 
     def test_do_quit(self):
         """test quit command. Exits the execution and outputs nothing
@@ -111,6 +142,17 @@ class TestHBNBCommandClassWorking(unittest.TestCase):
         with patch('sys.stdout', new=StringIO()) as f:
             self.assertFalse(HBNBCommand().onecmd(''))
             self.assertEqual(f.getvalue(), '')
+
+    def test_count(self):
+        """test count
+        """
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().precmd("User.count()")
+            count = 0
+            for k in storage.all():
+                if k.split(".")[0] == "User":
+                    count += 1
+            self.assertEqual(f.getvalue().strip(), str(count))
 
     def test_do_all(self):
         """test all
