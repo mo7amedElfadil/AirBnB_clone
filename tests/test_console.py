@@ -99,6 +99,11 @@ class TestHBNBCommandClassWorking(unittest.TestCase):
             else:
                 self.assertIn(f"{k}", HBNBCommand.__dict__.keys())
 
+    def test_prompt_string(self):
+        """test prompt string
+        """
+        self.assertEqual("(hbnb) ", HBNBCommand.prompt)
+
     def test_help(self):
         """test help command.
         """
@@ -146,13 +151,14 @@ EOF  all  create  destroy  help  quit  show  update''', f_value)
     def test_count(self):
         """test count
         """
-        with patch('sys.stdout', new=StringIO()) as f:
-            HBNBCommand().precmd("User.count()")
-            count = 0
-            for k in storage.all():
-                if k.split(".")[0] == "User":
-                    count += 1
-            self.assertEqual(f.getvalue().strip(), str(count))
+        for cls in self.classes:
+            with patch('sys.stdout', new=StringIO()) as f:
+                HBNBCommand().precmd(f"{cls}.count()")
+                count = 0
+                for k in storage.all():
+                    if k.split(".")[0] == cls:
+                        count += 1
+                self.assertEqual(f.getvalue().strip(), str(count))
 
     def test_do_all(self):
         """test all
@@ -165,10 +171,22 @@ EOF  all  create  destroy  help  quit  show  update''', f_value)
             else:
                 self.assertEqual(f.getvalue().strip(), "[]")
 
+    def test_class_all(self):
+        """test <class>.all
+        """
+        for k in self.classes:
+            with patch('sys.stdout', new=StringIO()) as f:
+                HBNBCommand().onecmd(HBNBCommand().precmd(f"{k}.all()"))
+                # convert str list to list
+                if f.getvalue().strip() != "[]":
+                    self.assertRegex(f.getvalue().strip(), self.show_pattern)
+                else:
+                    self.assertEqual(f.getvalue().strip(), "[]")
+
     def test_do_all_class(self):
         """test all <class>
         """
-        for k, _ in self.classes.items():
+        for k in self.classes:
             with patch('sys.stdout', new=StringIO()) as f:
                 HBNBCommand().onecmd(f"all {k}")
                 if f.getvalue().strip() != "[]":
@@ -192,6 +210,18 @@ EOF  all  create  destroy  help  quit  show  update''', f_value)
                 self.instances.append(storage.all()[key])
                 self.assertIn(key, storage.all())
 
+    def test_class_create(self):
+        """test <class>.create()
+        """
+        for k in self.classes:
+            with patch('sys.stdout', new=StringIO()) as f:
+                HBNBCommand().onecmd(HBNBCommand().precmd(f"{k}.create()"))
+                self.assertRegex(f.getvalue().strip(), self.id_pattern)
+                res = f.getvalue().strip()
+                key = f"{k}." + res
+                self.instances.append(storage.all()[key])
+                self.assertIn(key, storage.all())
+
     def test_do_show(self):
         """test show <class>
         """
@@ -204,16 +234,42 @@ EOF  all  create  destroy  help  quit  show  update''', f_value)
                 key = f"{k}.{model.id}"
                 self.assertIn(key, storage.all())
 
+    def test_show_class(self):
+        """test <class>.show(<id>)
+        """
+        for k, v in self.classes.items():
+            model = v()
+            self.instances.append(model)
+            with patch('sys.stdout', new=StringIO()) as f:
+                HBNBCommand().onecmd(
+                    HBNBCommand().precmd(f"{k}.show({model.id})"))
+                self.assertRegex(f.getvalue().strip(), self.show_pattern)
+                key = f"{k}.{model.id}"
+                self.assertIn(key, storage.all())
+
     def test_do_destroy(self):
         """test destroy <class>
         """
-        for k, _ in self.classes.items():
+        for k in self.classes:
             with patch('sys.stdout', new=StringIO()) as f:
                 HBNBCommand().onecmd(f"create {k}")
                 f_value = f.getvalue().strip()
                 key = f"{k}.{f_value}"
                 self.assertIn(key, storage.all())
                 HBNBCommand().onecmd(f"destroy {k} {f_value}")
+                self.assertNotIn(key, storage.all())
+
+    def test_destroy_class(self):
+        """test  <class>.destroy()
+        """
+        for k in self.classes:
+            with patch('sys.stdout', new=StringIO()) as f:
+                HBNBCommand().onecmd(f"create {k}")
+                f_value = f.getvalue().strip()
+                key = f"{k}.{f_value}"
+                self.assertIn(key, storage.all())
+                HBNBCommand().onecmd(
+                    HBNBCommand().precmd(f"{k}.destroy({f_value})"))
                 self.assertNotIn(key, storage.all())
 
     def test_do_update(self):
@@ -227,6 +283,43 @@ EOF  all  create  destroy  help  quit  show  update''', f_value)
                 self.assertIn(key, storage.all())
                 HBNBCommand().onecmd(f'update {k}\
                                      {f_value} "attribute" "value"')
+                self.assertTrue(hasattr(storage.all()[key], "attribute"))
+                self.assertEqual(storage.all()[key]
+                                 .to_dict()["attribute"], "value")
+                HBNBCommand().onecmd(f"destroy {k} {f_value}")
+                self.assertNotIn(key, storage.all())
+
+    def test_update_class(self):
+        """test <class>.update(<id>, <attribute>, <value>)
+        """
+        for k, _ in self.classes.items():
+            with patch('sys.stdout', new=StringIO()) as f:
+                HBNBCommand().onecmd(f"create {k}")
+                f_value = f.getvalue().strip()
+                key = f"{k}.{f_value}"
+                self.assertIn(key, storage.all())
+                HBNBCommand().onecmd(
+                    HBNBCommand().precmd(f'{k}.update(\
+                                     {f_value}, "attribute", "value")'))
+                self.assertTrue(hasattr(storage.all()[key], "attribute"))
+                self.assertEqual(storage.all()[key]
+                                 .to_dict()["attribute"], "value")
+                HBNBCommand().onecmd(f"destroy {k} {f_value}")
+                self.assertNotIn(key, storage.all())
+
+    def test_update_class_dict(self):
+        """test <class>.update(<id>, <dictionary>)
+        """
+        for k, _ in self.classes.items():
+            with patch('sys.stdout', new=StringIO()) as f:
+                HBNBCommand().onecmd(f"create {k}")
+                f_value = f.getvalue().strip()
+                key = f"{k}.{f_value}"
+                self.assertIn(key, storage.all())
+                HBNBCommand().onecmd(
+                    HBNBCommand().precmd(f'{k}.update(\
+                                         {f_value}, \
+                                            {{"attribute": "value"}})'))
                 self.assertTrue(hasattr(storage.all()[key], "attribute"))
                 self.assertEqual(storage.all()[key]
                                  .to_dict()["attribute"], "value")
@@ -251,6 +344,16 @@ class TestHBNBCommandClassBreaking(unittest.TestCase):
         """
         with patch('sys.stdout', new=StringIO()) as f:
             HBNBCommand().onecmd("all ds")
+            f_output = f.getvalue().strip()
+            cmd_output = "** class doesn't exist **"
+            self.assertEqual(f_output, cmd_output)
+
+    def test_class_all_wrong_class(self):
+        """test all with wrong
+        """
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd(
+                HBNBCommand().precmd("ds.all()"))
             f_output = f.getvalue().strip()
             cmd_output = "** class doesn't exist **"
             self.assertEqual(f_output, cmd_output)
@@ -291,6 +394,16 @@ class TestHBNBCommandClassBreaking(unittest.TestCase):
             cmd_output = "** class doesn't exist **"
             self.assertEqual(f_output, cmd_output)
 
+    def test_class_show_wrong_class(self):
+        """test show with wrong class
+        """
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd(
+                HBNBCommand().precmd("ds.show()"))
+            f_output = f.getvalue().strip()
+            cmd_output = "** class doesn't exist **"
+            self.assertEqual(f_output, cmd_output)
+
     def test_show_no_id(self):
         """test show with no id
         """
@@ -300,11 +413,31 @@ class TestHBNBCommandClassBreaking(unittest.TestCase):
             cmd_output = "** instance id missing **"
             self.assertEqual(f_output, cmd_output)
 
+    def test_class_show_no_id(self):
+        """test show with no id
+        """
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd(
+                HBNBCommand().precmd("BaseModel.show()"))
+            f_output = f.getvalue().strip()
+            cmd_output = "** instance id missing **"
+            self.assertEqual(f_output, cmd_output)
+
     def test_show_wrong_id(self):
         """test show with wrong id
         """
         with patch('sys.stdout', new=StringIO()) as f:
             HBNBCommand().onecmd("show BaseModel 0")
+            f_output = f.getvalue().strip()
+            cmd_output = "** no instance found **"
+            self.assertEqual(f_output, cmd_output)
+
+    def test_class_show_wrong_id(self):
+        """test show with wrong id
+        """
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd(
+                HBNBCommand().precmd("BaseModel.show(0)"))
             f_output = f.getvalue().strip()
             cmd_output = "** no instance found **"
             self.assertEqual(f_output, cmd_output)
@@ -327,6 +460,16 @@ class TestHBNBCommandClassBreaking(unittest.TestCase):
             cmd_output = "** class doesn't exist **"
             self.assertEqual(f_output, cmd_output)
 
+    def test_class_destroy_wrong_class(self):
+        """test destroy with wrong
+        """
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd(
+                HBNBCommand().precmd("ds.destroy()"))
+            f_output = f.getvalue().strip()
+            cmd_output = "** class doesn't exist **"
+            self.assertEqual(f_output, cmd_output)
+
     def test_destroy_no_id(self):
         """test destroy with no id
         """
@@ -336,11 +479,31 @@ class TestHBNBCommandClassBreaking(unittest.TestCase):
             cmd_output = "** instance id missing **"
             self.assertEqual(f_output, cmd_output)
 
+    def test_class_destroy_no_id(self):
+        """test destroy with no id
+        """
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd(
+                HBNBCommand().precmd("BaseModel.destroy()"))
+            f_output = f.getvalue().strip()
+            cmd_output = "** instance id missing **"
+            self.assertEqual(f_output, cmd_output)
+
     def test_destroy_wrong_id(self):
         """test destroy with wrong id
         """
         with patch('sys.stdout', new=StringIO()) as f:
             HBNBCommand().onecmd("destroy BaseModel 0")
+            f_output = f.getvalue().strip()
+            cmd_output = "** no instance found **"
+            self.assertEqual(f_output, cmd_output)
+
+    def test_class_destroy_wrong_id(self):
+        """test destroy with wrong id
+        """
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd(
+                HBNBCommand().precmd("BaseModel.destroy(0)"))
             f_output = f.getvalue().strip()
             cmd_output = "** no instance found **"
             self.assertEqual(f_output, cmd_output)
@@ -363,6 +526,16 @@ class TestHBNBCommandClassBreaking(unittest.TestCase):
             cmd_output = "** class doesn't exist **"
             self.assertEqual(f_output, cmd_output)
 
+    def test_class_update_wrong_class(self):
+        """test update with wrong class
+        """
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd(
+                HBNBCommand().precmd("cls.update()"))
+            f_output = f.getvalue().strip()
+            cmd_output = "** class doesn't exist **"
+            self.assertEqual(f_output, cmd_output)
+
     def test_update_no_id(self):
         """test update with no id
         """
@@ -372,11 +545,31 @@ class TestHBNBCommandClassBreaking(unittest.TestCase):
             cmd_output = "** instance id missing **"
             self.assertEqual(f_output, cmd_output)
 
+    def test_class_update_no_id(self):
+        """test update with no id
+        """
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd(
+                HBNBCommand().precmd("User.update()"))
+            f_output = f.getvalue().strip()
+            cmd_output = "** instance id missing **"
+            self.assertEqual(f_output, cmd_output)
+
     def test_update_wrong_id(self):
         """test update with wrong id
         """
         with patch('sys.stdout', new=StringIO()) as f:
             HBNBCommand().onecmd("update User 0")
+            f_output = f.getvalue().strip()
+            cmd_output = "** no instance found **"
+            self.assertEqual(f_output, cmd_output)
+
+    def test_class_update_wrong_id(self):
+        """test update with wrong id
+        """
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd(
+                HBNBCommand().precmd("User.update(0)"))
             f_output = f.getvalue().strip()
             cmd_output = "** no instance found **"
             self.assertEqual(f_output, cmd_output)
@@ -394,6 +587,20 @@ class TestHBNBCommandClassBreaking(unittest.TestCase):
             self.assertEqual(f_output, cmd_output)
             HBNBCommand().onecmd(f"destroy User {usr_id}")
 
+    def test_class_update_no_attribute(self):
+        """test update with no attribute
+        """
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("create User")
+            usr_id = f.getvalue().strip()
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd(
+                HBNBCommand().precmd(f"update User {usr_id}"))
+            f_output = f.getvalue().strip()
+            cmd_output = "** attribute name missing **"
+            self.assertEqual(f_output, cmd_output)
+            HBNBCommand().onecmd(f"destroy User {usr_id}")
+
     def test_update_no_value(self):
         """test update with no class
         """
@@ -402,6 +609,20 @@ class TestHBNBCommandClassBreaking(unittest.TestCase):
             usr_id = f.getvalue().strip()
         with patch('sys.stdout', new=StringIO()) as f:
             HBNBCommand().onecmd(f'update User {usr_id} "attribute"')
+            f_output = f.getvalue().strip()
+            cmd_output = "** value missing **"
+            self.assertEqual(f_output, cmd_output)
+            HBNBCommand().onecmd(f"destroy User {usr_id}")
+
+    def test_class_update_no_value(self):
+        """test update with no class
+        """
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("create User")
+            usr_id = f.getvalue().strip()
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd(
+                HBNBCommand().precmd(f'update User {usr_id} "attribute"'))
             f_output = f.getvalue().strip()
             cmd_output = "** value missing **"
             self.assertEqual(f_output, cmd_output)
