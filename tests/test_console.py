@@ -267,6 +267,11 @@ EOF  all  create  destroy  help  quit  show  update''', f_value)
                     self.assertRegex(f.getvalue().strip(), self.show_pattern)
                 else:
                     self.assertEqual(f.getvalue().strip(), "[]")
+                res = []
+                for i, j in storage.all().items():
+                    if k == i.split(".")[0]:
+                        res.append(str(j))
+                self.assertEqual(str(res), f.getvalue().strip())
 
     def test_BaseModel_all(self):
         """Test BaseModel.all()
@@ -278,6 +283,11 @@ EOF  all  create  destroy  help  quit  show  update''', f_value)
                 self.assertRegex(f.getvalue().strip(), self.show_pattern)
             else:
                 self.assertEqual(f.getvalue().strip(), "[]")
+            res = []
+            for i, j in storage.all().items():
+                if "BaseModel" == i.split(".")[0]:
+                    res.append(str(j))
+            self.assertEqual(str(res), f.getvalue().strip())
 
     def test_User_all(self):
         """Test User.all()
@@ -377,7 +387,7 @@ EOF  all  create  destroy  help  quit  show  update''', f_value)
                 self.assertRegex(f.getvalue().strip(), self.show_pattern)
             res = []
             for i, j in storage.all().items():
-                if "User" == i.split(".")[0]:
+                if "user" == i.split(".")[0]:
                     res.append(str(j))
 
             self.assertEqual(str(res), f.getvalue().strip())
@@ -457,13 +467,15 @@ EOF  all  create  destroy  help  quit  show  update''', f_value)
         """
         for cls in self.classes:
             with patch('sys.stdout', new=StringIO()) as f:
-                HBNBCommand().onecmd(
-                    HBNBCommand().precmd(f"{cls}.count()"))
+                self.assertFalse(HBNBCommand().onecmd(
+                    HBNBCommand().precmd(f"{cls}.count()")))
                 count = 0
+                result = f.getvalue().strip()
                 for k in storage.all():
                     if k.split(".")[0] == cls:
                         count += 1
-                self.assertEqual(f.getvalue().strip(), str(count))
+                self.assertTrue(result.isnumeric())
+                self.assertEqual(int(result), count)
 
     def test_count_BaseModel(self):
         """test count BaseModel
