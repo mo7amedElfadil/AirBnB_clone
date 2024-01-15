@@ -455,7 +455,8 @@ EOF  all  create  destroy  help  quit  show  update''', f_value)
         """
         for cls in self.classes:
             with patch('sys.stdout', new=StringIO()) as f:
-                HBNBCommand().precmd(f"{cls}.count()")
+                HBNBCommand().onecmd(
+                    HBNBCommand().precmd(f"{cls}.count()"))
                 count = 0
                 for k in storage.all():
                     if k.split(".")[0] == cls:
@@ -466,7 +467,8 @@ EOF  all  create  destroy  help  quit  show  update''', f_value)
         """test count BaseModel
         """
         with patch('sys.stdout', new=StringIO()) as f:
-            HBNBCommand().precmd("BaseModel.count()")
+            HBNBCommand().onecmd(
+                HBNBCommand().precmd("BaseModel.count()"))
             count = 0
             for k in storage.all():
                 if k.split(".")[0] == "BaseModel":
@@ -477,7 +479,8 @@ EOF  all  create  destroy  help  quit  show  update''', f_value)
         """test count User
         """
         with patch('sys.stdout', new=StringIO()) as f:
-            HBNBCommand().precmd("User.count()")
+            HBNBCommand().onecmd(
+                HBNBCommand().precmd("User.count()"))
             count = 0
             for k in storage.all():
                 if k.split(".")[0] == "User":
@@ -488,7 +491,8 @@ EOF  all  create  destroy  help  quit  show  update''', f_value)
         """test count State
         """
         with patch('sys.stdout', new=StringIO()) as f:
-            HBNBCommand().precmd("State.count()")
+            HBNBCommand().onecmd(
+                HBNBCommand().precmd("State.count()"))
             count = 0
             for k in storage.all():
                 if k.split(".")[0] == "State":
@@ -499,7 +503,8 @@ EOF  all  create  destroy  help  quit  show  update''', f_value)
         """test count City
         """
         with patch('sys.stdout', new=StringIO()) as f:
-            HBNBCommand().precmd("City.count()")
+            HBNBCommand().onecmd(
+                HBNBCommand().precmd("City.count()"))
             count = 0
             for k in storage.all():
                 if k.split(".")[0] == "City":
@@ -510,7 +515,8 @@ EOF  all  create  destroy  help  quit  show  update''', f_value)
         """test count Amenity
         """
         with patch('sys.stdout', new=StringIO()) as f:
-            HBNBCommand().precmd("Amenity.count()")
+            HBNBCommand().onecmd(
+                HBNBCommand().precmd("Amenity.count()"))
             count = 0
             for k in storage.all():
                 if k.split(".")[0] == "Amenity":
@@ -521,7 +527,8 @@ EOF  all  create  destroy  help  quit  show  update''', f_value)
         """test count Place
         """
         with patch('sys.stdout', new=StringIO()) as f:
-            HBNBCommand().precmd("Place.count()")
+            HBNBCommand().onecmd(
+                HBNBCommand().precmd("Place.count()"))
             count = 0
             for k in storage.all():
                 if k.split(".")[0] == "Place":
@@ -532,7 +539,8 @@ EOF  all  create  destroy  help  quit  show  update''', f_value)
         """test count Review
         """
         with patch('sys.stdout', new=StringIO()) as f:
-            HBNBCommand().precmd("Review.count()")
+            HBNBCommand().onecmd(
+                HBNBCommand().precmd("Review.count()"))
             count = 0
             for k in storage.all():
                 if k.split(".")[0] == "Review":
@@ -555,10 +563,10 @@ EOF  all  create  destroy  help  quit  show  update''', f_value)
         """test create BaseModel
         """
         with patch('sys.stdout', new=StringIO()) as f:
-            HBNBCommand().onecmd(f"create BaseModel")
+            HBNBCommand().onecmd("create BaseModel")
             self.assertRegex(f.getvalue().strip(), self.id_pattern)
             res = f.getvalue().strip()
-            key = f"BaseModel." + res
+            key = "BaseModel." + res
             self.instances.append(storage.all()[key])
             self.assertIn(key, storage.all())
 
@@ -566,10 +574,10 @@ EOF  all  create  destroy  help  quit  show  update''', f_value)
         """test create User
         """
         with patch('sys.stdout', new=StringIO()) as f:
-            HBNBCommand().onecmd(f"create User")
+            HBNBCommand().onecmd("create User")
             self.assertRegex(f.getvalue().strip(), self.id_pattern)
             res = f.getvalue().strip()
-            key = f"User." + res
+            key = "User." + res
             self.instances.append(storage.all()[key])
             self.assertIn(key, storage.all())
 
@@ -577,10 +585,10 @@ EOF  all  create  destroy  help  quit  show  update''', f_value)
         """test create State
         """
         with patch('sys.stdout', new=StringIO()) as f:
-            HBNBCommand().onecmd(f"create State")
+            HBNBCommand().onecmd("create State")
             self.assertRegex(f.getvalue().strip(), self.id_pattern)
             res = f.getvalue().strip()
-            key = f"State." + res
+            key = "State." + res
             self.instances.append(storage.all()[key])
             self.assertIn(key, storage.all())
 
@@ -588,10 +596,10 @@ EOF  all  create  destroy  help  quit  show  update''', f_value)
         """test create City
         """
         with patch('sys.stdout', new=StringIO()) as f:
-            HBNBCommand().onecmd(f"create City")
+            HBNBCommand().onecmd("create City")
             self.assertRegex(f.getvalue().strip(), self.id_pattern)
             res = f.getvalue().strip()
-            key = f"City." + res
+            key = "City." + res
             self.instances.append(storage.all()[key])
             self.assertIn(key, storage.all())
 
@@ -599,10 +607,10 @@ EOF  all  create  destroy  help  quit  show  update''', f_value)
         """test create Amenity
         """
         with patch('sys.stdout', new=StringIO()) as f:
-            HBNBCommand().onecmd(f"create Amenity")
+            HBNBCommand().onecmd("create Amenity")
             self.assertRegex(f.getvalue().strip(), self.id_pattern)
             res = f.getvalue().strip()
-            key = f"Amenity." + res
+            key = "Amenity." + res
             self.instances.append(storage.all()[key])
             self.assertIn(key, storage.all())
 
@@ -610,10 +618,10 @@ EOF  all  create  destroy  help  quit  show  update''', f_value)
         """test create Place
         """
         with patch('sys.stdout', new=StringIO()) as f:
-            HBNBCommand().onecmd(f"create Place")
+            HBNBCommand().onecmd("create Place")
             self.assertRegex(f.getvalue().strip(), self.id_pattern)
             res = f.getvalue().strip()
-            key = f"Place." + res
+            key = "Place." + res
             self.instances.append(storage.all()[key])
             self.assertIn(key, storage.all())
 
@@ -621,10 +629,10 @@ EOF  all  create  destroy  help  quit  show  update''', f_value)
         """test create Review
         """
         with patch('sys.stdout', new=StringIO()) as f:
-            HBNBCommand().onecmd(f"create Review")
+            HBNBCommand().onecmd("create Review")
             self.assertRegex(f.getvalue().strip(), self.id_pattern)
             res = f.getvalue().strip()
-            key = f"Review." + res
+            key = "Review." + res
             self.instances.append(storage.all()[key])
             self.assertIn(key, storage.all())
 
@@ -641,46 +649,46 @@ EOF  all  create  destroy  help  quit  show  update''', f_value)
                 self.assertIn(key, storage.all())
 
     def test_class_create_BaseModel(self):
-        """test <class>.create()
+        """test BaseModel.create()
         """
         with patch('sys.stdout', new=StringIO()) as f:
-            HBNBCommand().onecmd(HBNBCommand().precmd(f"BaseModel.create()"))
+            HBNBCommand().onecmd(HBNBCommand().precmd("BaseModel.create()"))
             self.assertRegex(f.getvalue().strip(), self.id_pattern)
             res = f.getvalue().strip()
-            key = f"BaseModel." + res
+            key = "BaseModel." + res
             self.instances.append(storage.all()[key])
             self.assertIn(key, storage.all())
 
     def test_class_create_User(self):
-        """test <class>.create()
+        """test User.create()
         """
         with patch('sys.stdout', new=StringIO()) as f:
-            HBNBCommand().onecmd(HBNBCommand().precmd(f"User.create()"))
+            HBNBCommand().onecmd(HBNBCommand().precmd("User.create()"))
             self.assertRegex(f.getvalue().strip(), self.id_pattern)
             res = f.getvalue().strip()
-            key = f"User." + res
+            key = "User." + res
             self.instances.append(storage.all()[key])
             self.assertIn(key, storage.all())
 
     def test_class_create_State(self):
-        """test <class>.create()
+        """test State.create()
         """
         with patch('sys.stdout', new=StringIO()) as f:
-            HBNBCommand().onecmd(HBNBCommand().precmd(f"State.create()"))
+            HBNBCommand().onecmd(HBNBCommand().precmd("State.create()"))
             self.assertRegex(f.getvalue().strip(), self.id_pattern)
             res = f.getvalue().strip()
-            key = f"State." + res
+            key = "State." + res
             self.instances.append(storage.all()[key])
             self.assertIn(key, storage.all())
 
     def test_class_create_City(self):
-        """test <class>.create()
+        """test City.create()
         """
         with patch('sys.stdout', new=StringIO()) as f:
-            HBNBCommand().onecmd(HBNBCommand().precmd(f"City.create()"))
+            HBNBCommand().onecmd(HBNBCommand().precmd("City.create()"))
             self.assertRegex(f.getvalue().strip(), self.id_pattern)
             res = f.getvalue().strip()
-            key = f"City." + res
+            key = "City." + res
             self.instances.append(storage.all()[key])
             self.assertIn(key, storage.all())
 
@@ -688,32 +696,32 @@ EOF  all  create  destroy  help  quit  show  update''', f_value)
         """test <class>.create()
         """
         with patch('sys.stdout', new=StringIO()) as f:
-            HBNBCommand().onecmd(HBNBCommand().precmd(f"Amenity.create()"))
+            HBNBCommand().onecmd(HBNBCommand().precmd("Amenity.create()"))
             self.assertRegex(f.getvalue().strip(), self.id_pattern)
             res = f.getvalue().strip()
-            key = f"Amenity." + res
+            key = "Amenity." + res
             self.instances.append(storage.all()[key])
             self.assertIn(key, storage.all())
 
     def test_class_create_Place(self):
-        """test <class>.create()
+        """test Place.create()
         """
         with patch('sys.stdout', new=StringIO()) as f:
-            HBNBCommand().onecmd(HBNBCommand().precmd(f"Place.create()"))
+            HBNBCommand().onecmd(HBNBCommand().precmd("Place.create()"))
             self.assertRegex(f.getvalue().strip(), self.id_pattern)
             res = f.getvalue().strip()
-            key = f"Place." + res
+            key = "Place." + res
             self.instances.append(storage.all()[key])
             self.assertIn(key, storage.all())
 
     def test_class_create_Review(self):
-        """test <class>.create()
+        """test Review.create()
         """
         with patch('sys.stdout', new=StringIO()) as f:
-            HBNBCommand().onecmd(HBNBCommand().precmd(f"Review.create()"))
+            HBNBCommand().onecmd(HBNBCommand().precmd("Review.create()"))
             self.assertRegex(f.getvalue().strip(), self.id_pattern)
             res = f.getvalue().strip()
-            key = f"Review." + res
+            key = "Review." + res
             self.instances.append(storage.all()[key])
             self.assertIn(key, storage.all())
 
@@ -730,7 +738,7 @@ EOF  all  create  destroy  help  quit  show  update''', f_value)
                 self.assertIn(key, storage.all())
 
     def test_do_show_BaseModel(self):
-        """test show <class>
+        """test show BaseModel
         """
         model = BaseModel()
         self.instances.append(model)
@@ -741,7 +749,7 @@ EOF  all  create  destroy  help  quit  show  update''', f_value)
             self.assertIn(key, storage.all())
 
     def test_do_show_User(self):
-        """test show <class>
+        """test show User
         """
         model = User()
         self.instances.append(model)
@@ -752,7 +760,7 @@ EOF  all  create  destroy  help  quit  show  update''', f_value)
             self.assertIn(key, storage.all())
 
     def test_do_show_State(self):
-        """test show <class>
+        """test show State
         """
         model = State()
         self.instances.append(model)
@@ -763,7 +771,7 @@ EOF  all  create  destroy  help  quit  show  update''', f_value)
             self.assertIn(key, storage.all())
 
     def test_do_show_City(self):
-        """test show <class>
+        """test show City
         """
         model = City()
         self.instances.append(model)
@@ -774,7 +782,7 @@ EOF  all  create  destroy  help  quit  show  update''', f_value)
             self.assertIn(key, storage.all())
 
     def test_do_show_Amenity(self):
-        """test show <class>
+        """test show Amenity
         """
         model = Amenity()
         self.instances.append(model)
@@ -785,7 +793,7 @@ EOF  all  create  destroy  help  quit  show  update''', f_value)
             self.assertIn(key, storage.all())
 
     def test_do_show_Place(self):
-        """test show <class>
+        """test show Place
         """
         model = Place()
         self.instances.append(model)
@@ -796,7 +804,7 @@ EOF  all  create  destroy  help  quit  show  update''', f_value)
             self.assertIn(key, storage.all())
 
     def test_do_show_Review(self):
-        """test show <class>
+        """test show Review
         """
         model = Review()
         self.instances.append(model)
@@ -806,7 +814,6 @@ EOF  all  create  destroy  help  quit  show  update''', f_value)
             key = f"Review.{model.id}"
             self.assertIn(key, storage.all())
 
-    # TODO: rest of class methods
     def test_show_class(self):
         """test <class>.show(<id>)
         """
@@ -820,6 +827,90 @@ EOF  all  create  destroy  help  quit  show  update''', f_value)
                 key = f"{k}.{model.id}"
                 self.assertIn(key, storage.all())
 
+    def test_show_class_BaseModel(self):
+        """test BaseModel.show(<id>)
+        """
+        model = BaseModel()
+        self.instances.append(model)
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd(
+                HBNBCommand().precmd(f"BaseModel.show({model.id})"))
+            self.assertRegex(f.getvalue().strip(), self.show_pattern)
+            key = f"BaseModel.{model.id}"
+            self.assertIn(key, storage.all())
+
+    def test_show_class_User(self):
+        """test User.show(<id>)
+        """
+        model = User()
+        self.instances.append(model)
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd(
+                HBNBCommand().precmd(f"User.show({model.id})"))
+            self.assertRegex(f.getvalue().strip(), self.show_pattern)
+            key = f"User.{model.id}"
+            self.assertIn(key, storage.all())
+
+    def test_show_class_State(self):
+        """test State.show(<id>)
+        """
+        model = State()
+        self.instances.append(model)
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd(
+                HBNBCommand().precmd(f"State.show({model.id})"))
+            self.assertRegex(f.getvalue().strip(), self.show_pattern)
+            key = f"State.{model.id}"
+            self.assertIn(key, storage.all())
+
+    def test_show_class_City(self):
+        """test City.show(<id>)
+        """
+        model = City()
+        self.instances.append(model)
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd(
+                HBNBCommand().precmd(f"City.show({model.id})"))
+            self.assertRegex(f.getvalue().strip(), self.show_pattern)
+            key = f"City.{model.id}"
+            self.assertIn(key, storage.all())
+
+    def test_show_class_Amenity(self):
+        """test Amenity.show(<id>)
+        """
+        model = Amenity()
+        self.instances.append(model)
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd(
+                HBNBCommand().precmd(f"Amenity.show({model.id})"))
+            self.assertRegex(f.getvalue().strip(), self.show_pattern)
+            key = f"Amenity.{model.id}"
+            self.assertIn(key, storage.all())
+
+    def test_show_class_Place(self):
+        """test Place.show(<id>)
+        """
+        model = Place()
+        self.instances.append(model)
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd(
+                HBNBCommand().precmd(f"Place.show({model.id})"))
+            self.assertRegex(f.getvalue().strip(), self.show_pattern)
+            key = f"Place.{model.id}"
+            self.assertIn(key, storage.all())
+
+    def test_show_class_Review(self):
+        """test Review.show(<id>)
+        """
+        model = Review()
+        self.instances.append(model)
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd(
+                HBNBCommand().precmd(f"Review.show({model.id})"))
+            self.assertRegex(f.getvalue().strip(), self.show_pattern)
+            key = f"Review.{model.id}"
+            self.assertIn(key, storage.all())
+
     def test_do_destroy(self):
         """test destroy <class>
         """
@@ -831,6 +922,83 @@ EOF  all  create  destroy  help  quit  show  update''', f_value)
                 self.assertIn(key, storage.all())
                 HBNBCommand().onecmd(f"destroy {k} {f_value}")
                 self.assertNotIn(key, storage.all())
+
+    def test_do_destroy_BaseModel(self):
+        """test destroy BaseModel
+        """
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("create BaseModel")
+            f_value = f.getvalue().strip()
+            key = f"BaseModel.{f_value}"
+            self.assertIn(key, storage.all())
+            HBNBCommand().onecmd(f"destroy BaseModel {f_value}")
+            self.assertNotIn(key, storage.all())
+
+    def test_do_destroy_User(self):
+        """test destroy User
+        """
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("create User")
+            f_value = f.getvalue().strip()
+            key = f"User.{f_value}"
+            self.assertIn(key, storage.all())
+            HBNBCommand().onecmd(f"destroy User {f_value}")
+            self.assertNotIn(key, storage.all())
+
+    def test_do_destroy_State(self):
+        """test destroy State
+        """
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("create State")
+            f_value = f.getvalue().strip()
+            key = f"State.{f_value}"
+            self.assertIn(key, storage.all())
+            HBNBCommand().onecmd(f"destroy State {f_value}")
+            self.assertNotIn(key, storage.all())
+
+    def test_do_destroy_City(self):
+        """test destroy City
+        """
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("create City")
+            f_value = f.getvalue().strip()
+            key = f"City.{f_value}"
+            self.assertIn(key, storage.all())
+            HBNBCommand().onecmd(f"destroy City {f_value}")
+            self.assertNotIn(key, storage.all())
+
+    def test_do_destroy_Amenity(self):
+        """test destroy Amenity
+        """
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("create Amenity")
+            f_value = f.getvalue().strip()
+            key = f"Amenity.{f_value}"
+            self.assertIn(key, storage.all())
+            HBNBCommand().onecmd(f"destroy Amenity {f_value}")
+            self.assertNotIn(key, storage.all())
+
+    def test_do_destroy_Place(self):
+        """test destroy Place
+        """
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("create Place")
+            f_value = f.getvalue().strip()
+            key = f"Place.{f_value}"
+            self.assertIn(key, storage.all())
+            HBNBCommand().onecmd(f"destroy Place {f_value}")
+            self.assertNotIn(key, storage.all())
+
+    def test_do_destroy_Review(self):
+        """test destroy Review
+        """
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("create Review")
+            f_value = f.getvalue().strip()
+            key = f"Review.{f_value}"
+            self.assertIn(key, storage.all())
+            HBNBCommand().onecmd(f"destroy Review {f_value}")
+            self.assertNotIn(key, storage.all())
 
     def test_destroy_class(self):
         """test  <class>.destroy()
@@ -844,6 +1012,90 @@ EOF  all  create  destroy  help  quit  show  update''', f_value)
                 HBNBCommand().onecmd(
                     HBNBCommand().precmd(f"{k}.destroy({f_value})"))
                 self.assertNotIn(key, storage.all())
+
+    def test_BaseModel_destroy_class(self):
+        """test BaseModel.destroy()
+        """
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("create BaseModel")
+            f_value = f.getvalue().strip()
+            key = f"BaseModel.{f_value}"
+            self.assertIn(key, storage.all())
+            HBNBCommand().onecmd(
+                HBNBCommand().precmd(f"BaseModel.destroy({f_value})"))
+            self.assertNotIn(key, storage.all())
+
+    def test_User_destroy_class(self):
+        """test User.destroy()
+        """
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("create User")
+            f_value = f.getvalue().strip()
+            key = f"User.{f_value}"
+            self.assertIn(key, storage.all())
+            HBNBCommand().onecmd(
+                HBNBCommand().precmd(f"User.destroy({f_value})"))
+            self.assertNotIn(key, storage.all())
+
+    def test_State_destroy_class(self):
+        """test State.destroy()
+        """
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("create State")
+            f_value = f.getvalue().strip()
+            key = f"State.{f_value}"
+            self.assertIn(key, storage.all())
+            HBNBCommand().onecmd(
+                HBNBCommand().precmd(f"State.destroy({f_value})"))
+            self.assertNotIn(key, storage.all())
+
+    def test_City_destroy_class(self):
+        """test City.destroy()
+        """
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("create City")
+            f_value = f.getvalue().strip()
+            key = f"City.{f_value}"
+            self.assertIn(key, storage.all())
+            HBNBCommand().onecmd(
+                HBNBCommand().precmd(f"City.destroy({f_value})"))
+            self.assertNotIn(key, storage.all())
+
+    def test_Amenity_destroy_class(self):
+        """test Amenity.destroy()
+        """
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("create Amenity")
+            f_value = f.getvalue().strip()
+            key = f"Amenity.{f_value}"
+            self.assertIn(key, storage.all())
+            HBNBCommand().onecmd(
+                HBNBCommand().precmd(f"Amenity.destroy({f_value})"))
+            self.assertNotIn(key, storage.all())
+
+    def test_Place_destroy_class(self):
+        """test Place.destroy()
+        """
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("create Place")
+            f_value = f.getvalue().strip()
+            key = f"Place.{f_value}"
+            self.assertIn(key, storage.all())
+            HBNBCommand().onecmd(
+                HBNBCommand().precmd(f"Place.destroy({f_value})"))
+            self.assertNotIn(key, storage.all())
+
+    def test_Review_destroy_class(self):
+        """test Review.destroy()
+        """
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("create Review")
+            f_value = f.getvalue().strip()
+            key = f"Review.{f_value}"
+            self.assertIn(key, storage.all())
+            HBNBCommand().onecmd(
+                HBNBCommand().precmd(f"Review.destroy({f_value})"))
+            self.assertNotIn(key, storage.all())
 
     def test_do_update(self):
         """test update <class>
@@ -861,6 +1113,118 @@ EOF  all  create  destroy  help  quit  show  update''', f_value)
                                  .to_dict()["attribute"], "value")
                 HBNBCommand().onecmd(f"destroy {k} {f_value}")
                 self.assertNotIn(key, storage.all())
+
+    def test_do_update_BaseModel(self):
+        """test update BaseModel
+        """
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("create BaseModel")
+            f_value = f.getvalue().strip()
+            key = f"BaseModel.{f_value}"
+            self.assertIn(key, storage.all())
+            HBNBCommand().onecmd(f'update BaseModel\
+                                    {f_value} "attribute" "value"')
+            self.assertTrue(hasattr(storage.all()[key], "attribute"))
+            self.assertEqual(storage.all()[key]
+                             .to_dict()["attribute"], "value")
+            HBNBCommand().onecmd(f"destroy BaseModel {f_value}")
+            self.assertNotIn(key, storage.all())
+
+    def test_do_update_User(self):
+        """test update User
+        """
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("create User")
+            f_value = f.getvalue().strip()
+            key = f"User.{f_value}"
+            self.assertIn(key, storage.all())
+            HBNBCommand().onecmd(f'update User\
+                                    {f_value} "attribute" "value"')
+            self.assertTrue(hasattr(storage.all()[key], "attribute"))
+            self.assertEqual(storage.all()[key]
+                             .to_dict()["attribute"], "value")
+            HBNBCommand().onecmd(f"destroy User {f_value}")
+            self.assertNotIn(key, storage.all())
+
+    def test_do_update_State(self):
+        """test update State
+        """
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("create State")
+            f_value = f.getvalue().strip()
+            key = f"State.{f_value}"
+            self.assertIn(key, storage.all())
+            HBNBCommand().onecmd(f'update State\
+                                    {f_value} "attribute" "value"')
+            self.assertTrue(hasattr(storage.all()[key], "attribute"))
+            self.assertEqual(storage.all()[key]
+                             .to_dict()["attribute"], "value")
+            HBNBCommand().onecmd(f"destroy State {f_value}")
+            self.assertNotIn(key, storage.all())
+
+    def test_do_update_City(self):
+        """test update City
+        """
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("create City")
+            f_value = f.getvalue().strip()
+            key = f"City.{f_value}"
+            self.assertIn(key, storage.all())
+            HBNBCommand().onecmd(f'update City\
+                                    {f_value} "attribute" "value"')
+            self.assertTrue(hasattr(storage.all()[key], "attribute"))
+            self.assertEqual(storage.all()[key]
+                             .to_dict()["attribute"], "value")
+            HBNBCommand().onecmd(f"destroy City {f_value}")
+            self.assertNotIn(key, storage.all())
+
+    def test_do_update_Amenity(self):
+        """test update Amenity
+        """
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("create Amenity")
+            f_value = f.getvalue().strip()
+            key = f"Amenity.{f_value}"
+            self.assertIn(key, storage.all())
+            HBNBCommand().onecmd(f'update Amenity\
+                                    {f_value} "attribute" "value"')
+            self.assertTrue(hasattr(storage.all()[key], "attribute"))
+            self.assertEqual(storage.all()[key]
+                             .to_dict()["attribute"], "value")
+            HBNBCommand().onecmd(f"destroy Amenity {f_value}")
+            self.assertNotIn(key, storage.all())
+
+    def test_do_update_Place(self):
+        """test update Place
+        """
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("create Place")
+            f_value = f.getvalue().strip()
+            key = f"Place.{f_value}"
+            self.assertIn(key, storage.all())
+            HBNBCommand().onecmd(f'update Place\
+                                    {f_value} "attribute" "value"')
+            self.assertTrue(hasattr(storage.all()[key], "attribute"))
+            self.assertEqual(storage.all()[key]
+                             .to_dict()["attribute"], "value")
+            HBNBCommand().onecmd(f"destroy Place {f_value}")
+            self.assertNotIn(key, storage.all())
+
+    def test_do_update_Review(self):
+        """test update Review
+        """
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("create Review")
+            f_value = f.getvalue().strip()
+            key = f"Review.{f_value}"
+            self.assertIn(key, storage.all())
+            HBNBCommand().onecmd(f'update Review\
+                                    {f_value} "attribute" "value"')
+            self.assertTrue(hasattr(storage.all()[key], "attribute"))
+            self.assertEqual(storage.all()[key]
+                             .to_dict()["attribute"], "value")
+            HBNBCommand().onecmd(f"destroy Review {f_value}")
+            self.assertNotIn(key, storage.all())
 
     def test_update_class(self):
         """test <class>.update(<id>, <attribute>, <value>)
@@ -880,6 +1244,125 @@ EOF  all  create  destroy  help  quit  show  update''', f_value)
                 HBNBCommand().onecmd(f"destroy {k} {f_value}")
                 self.assertNotIn(key, storage.all())
 
+    def test_BaseModel_update_class(self):
+        """test BaseModel.update(<id>, <attribute>, <value>)
+        """
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd(f"create BaseModel")
+            f_value = f.getvalue().strip()
+            key = f"BaseModel.{f_value}"
+            self.assertIn(key, storage.all())
+            HBNBCommand().onecmd(
+                HBNBCommand().precmd(f'BaseModel.update(\
+                                        {f_value}, "attribute", "value")'))
+            self.assertTrue(hasattr(storage.all()[key], "attribute"))
+            self.assertEqual(storage.all()[key]
+                             .to_dict()["attribute"], "value")
+            HBNBCommand().onecmd(f"destroy BaseModel {f_value}")
+            self.assertNotIn(key, storage.all())
+
+    def test_User_update_class(self):
+        """test User.update(<id>, <attribute>, <value>)
+        """
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd(f"create User")
+            f_value = f.getvalue().strip()
+            key = f"User.{f_value}"
+            self.assertIn(key, storage.all())
+            HBNBCommand().onecmd(
+                HBNBCommand().precmd(f'User.update(\
+                                        {f_value}, "attribute", "value")'))
+            self.assertTrue(hasattr(storage.all()[key], "attribute"))
+            self.assertEqual(storage.all()[key]
+                             .to_dict()["attribute"], "value")
+            HBNBCommand().onecmd(f"destroy User {f_value}")
+            self.assertNotIn(key, storage.all())
+
+    def test_State_update_class(self):
+        """test State.update(<id>, <attribute>, <value>)
+        """
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd(f"create State")
+            f_value = f.getvalue().strip()
+            key = f"State.{f_value}"
+            self.assertIn(key, storage.all())
+            HBNBCommand().onecmd(
+                HBNBCommand().precmd(f'State.update(\
+                                        {f_value}, "attribute", "value")'))
+            self.assertTrue(hasattr(storage.all()[key], "attribute"))
+            self.assertEqual(storage.all()[key]
+                             .to_dict()["attribute"], "value")
+            HBNBCommand().onecmd(f"destroy State {f_value}")
+            self.assertNotIn(key, storage.all())
+
+    def test_City_update_class(self):
+        """test City.update(<id>, <attribute>, <value>)
+        """
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd(f"create City")
+            f_value = f.getvalue().strip()
+            key = f"City.{f_value}"
+            self.assertIn(key, storage.all())
+            HBNBCommand().onecmd(
+                HBNBCommand().precmd(f'City.update(\
+                                        {f_value}, "attribute", "value")'))
+            self.assertTrue(hasattr(storage.all()[key], "attribute"))
+            self.assertEqual(storage.all()[key]
+                             .to_dict()["attribute"], "value")
+            HBNBCommand().onecmd(f"destroy City {f_value}")
+            self.assertNotIn(key, storage.all())
+
+    def test_Amenity_update_class(self):
+        """test Amenity.update(<id>, <attribute>, <value>)
+        """
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd(f"create Amenity")
+            f_value = f.getvalue().strip()
+            key = f"Amenity.{f_value}"
+            self.assertIn(key, storage.all())
+            HBNBCommand().onecmd(
+                HBNBCommand().precmd(f'Amenity.update(\
+                                        {f_value}, "attribute", "value")'))
+            self.assertTrue(hasattr(storage.all()[key], "attribute"))
+            self.assertEqual(storage.all()[key]
+                             .to_dict()["attribute"], "value")
+            HBNBCommand().onecmd(f"destroy Amenity {f_value}")
+            self.assertNotIn(key, storage.all())
+
+    def test_Place_update_class(self):
+        """test Place.update(<id>, <attribute>, <value>)
+        """
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd(f"create Place")
+            f_value = f.getvalue().strip()
+            key = f"Place.{f_value}"
+            self.assertIn(key, storage.all())
+            HBNBCommand().onecmd(
+                HBNBCommand().precmd(f'Place.update(\
+                                        {f_value}, "attribute", "value")'))
+            self.assertTrue(hasattr(storage.all()[key], "attribute"))
+            self.assertEqual(storage.all()[key]
+                             .to_dict()["attribute"], "value")
+            HBNBCommand().onecmd(f"destroy Place {f_value}")
+            self.assertNotIn(key, storage.all())
+
+    def test_Review_update_class(self):
+        """test Review.update(<id>, <attribute>, <value>)
+        """
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd(f"create Review")
+            f_value = f.getvalue().strip()
+            key = f"Review.{f_value}"
+            self.assertIn(key, storage.all())
+            HBNBCommand().onecmd(
+                HBNBCommand().precmd(f'Review.update(\
+                                        {f_value}, "attribute", "value")'))
+            self.assertTrue(hasattr(storage.all()[key], "attribute"))
+            self.assertEqual(storage.all()[key]
+                             .to_dict()["attribute"], "value")
+            HBNBCommand().onecmd(f"destroy Review {f_value}")
+            self.assertNotIn(key, storage.all())
+
     def test_update_class_dict(self):
         """test <class>.update(<id>, <dictionary>)
         """
@@ -898,6 +1381,132 @@ EOF  all  create  destroy  help  quit  show  update''', f_value)
                                  .to_dict()["attribute"], "value")
                 HBNBCommand().onecmd(f"destroy {k} {f_value}")
                 self.assertNotIn(key, storage.all())
+
+    def test_BaseModel_update_class_dict(self):
+        """test BaseModel.update(<id>, <dictionary>)
+        """
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("create BaseModel")
+            f_value = f.getvalue().strip()
+            key = f"BaseModel.{f_value}"
+            self.assertIn(key, storage.all())
+            HBNBCommand().onecmd(
+                HBNBCommand().precmd(f'BaseModel.update(\
+                                        {f_value}, \
+                                        {{"attribute": "value"}})'))
+            self.assertTrue(hasattr(storage.all()[key], "attribute"))
+            self.assertEqual(storage.all()[key]
+                             .to_dict()["attribute"], "value")
+            HBNBCommand().onecmd(f"destroy BaseModel {f_value}")
+            self.assertNotIn(key, storage.all())
+
+    def test_User_update_class_dict(self):
+        """test User.update(<id>, <dictionary>)
+        """
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("create User")
+            f_value = f.getvalue().strip()
+            key = f"User.{f_value}"
+            self.assertIn(key, storage.all())
+            HBNBCommand().onecmd(
+                HBNBCommand().precmd(f'User.update(\
+                                        {f_value}, \
+                                        {{"attribute": "value"}})'))
+            self.assertTrue(hasattr(storage.all()[key], "attribute"))
+            self.assertEqual(storage.all()[key]
+                             .to_dict()["attribute"], "value")
+            HBNBCommand().onecmd(f"destroy User {f_value}")
+            self.assertNotIn(key, storage.all())
+
+    def test_State_update_class_dict(self):
+        """test State.update(<id>, <dictionary>)
+        """
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("create State")
+            f_value = f.getvalue().strip()
+            key = f"State.{f_value}"
+            self.assertIn(key, storage.all())
+            HBNBCommand().onecmd(
+                HBNBCommand().precmd(f'State.update(\
+                                        {f_value}, \
+                                        {{"attribute": "value"}})'))
+            self.assertTrue(hasattr(storage.all()[key], "attribute"))
+            self.assertEqual(storage.all()[key]
+                             .to_dict()["attribute"], "value")
+            HBNBCommand().onecmd(f"destroy State {f_value}")
+            self.assertNotIn(key, storage.all())
+
+    def test_City_update_class_dict(self):
+        """test City.update(<id>, <dictionary>)
+        """
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("create City")
+            f_value = f.getvalue().strip()
+            key = f"City.{f_value}"
+            self.assertIn(key, storage.all())
+            HBNBCommand().onecmd(
+                HBNBCommand().precmd(f'City.update(\
+                                        {f_value}, \
+                                        {{"attribute": "value"}})'))
+            self.assertTrue(hasattr(storage.all()[key], "attribute"))
+            self.assertEqual(storage.all()[key]
+                             .to_dict()["attribute"], "value")
+            HBNBCommand().onecmd(f"destroy City {f_value}")
+            self.assertNotIn(key, storage.all())
+
+    def test_Amenity_update_class_dict(self):
+        """test Amenity.update(<id>, <dictionary>)
+        """
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("create Amenity")
+            f_value = f.getvalue().strip()
+            key = f"Amenity.{f_value}"
+            self.assertIn(key, storage.all())
+            HBNBCommand().onecmd(
+                HBNBCommand().precmd(f'Amenity.update(\
+                                        {f_value}, \
+                                        {{"attribute": "value"}})'))
+            self.assertTrue(hasattr(storage.all()[key], "attribute"))
+            self.assertEqual(storage.all()[key]
+                             .to_dict()["attribute"], "value")
+            HBNBCommand().onecmd(f"destroy Amenity {f_value}")
+            self.assertNotIn(key, storage.all())
+
+    def test_Place_update_class_dict(self):
+        """test Place.update(<id>, <dictionary>)
+        """
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("create Place")
+            f_value = f.getvalue().strip()
+            key = f"Place.{f_value}"
+            self.assertIn(key, storage.all())
+            HBNBCommand().onecmd(
+                HBNBCommand().precmd(f'Place.update(\
+                                        {f_value}, \
+                                        {{"attribute": "value"}})'))
+            self.assertTrue(hasattr(storage.all()[key], "attribute"))
+            self.assertEqual(storage.all()[key]
+                             .to_dict()["attribute"], "value")
+            HBNBCommand().onecmd(f"destroy Place {f_value}")
+            self.assertNotIn(key, storage.all())
+
+    def test_Review_update_class_dict(self):
+        """test Review.update(<id>, <dictionary>)
+        """
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd("create Review")
+            f_value = f.getvalue().strip()
+            key = f"Review.{f_value}"
+            self.assertIn(key, storage.all())
+            HBNBCommand().onecmd(
+                HBNBCommand().precmd(f'Review.update(\
+                                        {f_value}, \
+                                        {{"attribute": "value"}})'))
+            self.assertTrue(hasattr(storage.all()[key], "attribute"))
+            self.assertEqual(storage.all()[key]
+                             .to_dict()["attribute"], "value")
+            HBNBCommand().onecmd(f"destroy Review {f_value}")
+            self.assertNotIn(key, storage.all())
 
 
 class TestConsoleBreaking(unittest.TestCase):
