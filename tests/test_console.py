@@ -732,86 +732,79 @@ EOF  all  create  destroy  help  quit  show  update''', f_value)
     def test_do_show_BaseModel(self):
         """test show <class>
         """
-        for k in self.classes:
-            model = BaseModel()
-            self.instances.append(model)
-            with patch('sys.stdout', new=StringIO()) as f:
-                HBNBCommand().onecmd(f"show BaseModel {model.id}")
-                self.assertRegex(f.getvalue().strip(), self.show_pattern)
-                key = f"BaseModel.{model.id}"
-                self.assertIn(key, storage.all())
+        model = BaseModel()
+        self.instances.append(model)
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd(f"show BaseModel {model.id}")
+            self.assertRegex(f.getvalue().strip(), self.show_pattern)
+            key = f"BaseModel.{model.id}"
+            self.assertIn(key, storage.all())
 
     def test_do_show_User(self):
         """test show <class>
         """
-        for k in self.classes:
-            model = User()
-            self.instances.append(model)
-            with patch('sys.stdout', new=StringIO()) as f:
-                HBNBCommand().onecmd(f"show User {model.id}")
-                self.assertRegex(f.getvalue().strip(), self.show_pattern)
-                key = f"User.{model.id}"
-                self.assertIn(key, storage.all())
+        model = User()
+        self.instances.append(model)
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd(f"show User {model.id}")
+            self.assertRegex(f.getvalue().strip(), self.show_pattern)
+            key = f"User.{model.id}"
+            self.assertIn(key, storage.all())
 
     def test_do_show_State(self):
         """test show <class>
         """
-        for k in self.classes:
-            model = State()
-            self.instances.append(model)
-            with patch('sys.stdout', new=StringIO()) as f:
-                HBNBCommand().onecmd(f"show State {model.id}")
-                self.assertRegex(f.getvalue().strip(), self.show_pattern)
-                key = f"State.{model.id}"
-                self.assertIn(key, storage.all())
+        model = State()
+        self.instances.append(model)
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd(f"show State {model.id}")
+            self.assertRegex(f.getvalue().strip(), self.show_pattern)
+            key = f"State.{model.id}"
+            self.assertIn(key, storage.all())
 
     def test_do_show_City(self):
         """test show <class>
         """
-        for k in self.classes:
-            model = City()
-            self.instances.append(model)
-            with patch('sys.stdout', new=StringIO()) as f:
-                HBNBCommand().onecmd(f"show City {model.id}")
-                self.assertRegex(f.getvalue().strip(), self.show_pattern)
-                key = f"City.{model.id}"
-                self.assertIn(key, storage.all())
+        model = City()
+        self.instances.append(model)
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd(f"show City {model.id}")
+            self.assertRegex(f.getvalue().strip(), self.show_pattern)
+            key = f"City.{model.id}"
+            self.assertIn(key, storage.all())
 
     def test_do_show_Amenity(self):
         """test show <class>
         """
-        for k in self.classes:
-            model = Amenity()
-            self.instances.append(model)
-            with patch('sys.stdout', new=StringIO()) as f:
-                HBNBCommand().onecmd(f"show Amenity {model.id}")
-                self.assertRegex(f.getvalue().strip(), self.show_pattern)
-                key = f"Amenity.{model.id}"
-                self.assertIn(key, storage.all())
+        model = Amenity()
+        self.instances.append(model)
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd(f"show Amenity {model.id}")
+            self.assertRegex(f.getvalue().strip(), self.show_pattern)
+            key = f"Amenity.{model.id}"
+            self.assertIn(key, storage.all())
 
     def test_do_show_Place(self):
         """test show <class>
         """
-        for k in self.classes:
-            model = Place()
-            self.instances.append(model)
-            with patch('sys.stdout', new=StringIO()) as f:
-                HBNBCommand().onecmd(f"show Place {model.id}")
-                self.assertRegex(f.getvalue().strip(), self.show_pattern)
-                key = f"Place.{model.id}"
-                self.assertIn(key, storage.all())
+        model = Place()
+        self.instances.append(model)
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd(f"show Place {model.id}")
+            self.assertRegex(f.getvalue().strip(), self.show_pattern)
+            key = f"Place.{model.id}"
+            self.assertIn(key, storage.all())
 
     def test_do_show_Review(self):
         """test show <class>
         """
-        for k in self.classes:
-            model = Review()
-            self.instances.append(model)
-            with patch('sys.stdout', new=StringIO()) as f:
-                HBNBCommand().onecmd(f"show Review {model.id}")
-                self.assertRegex(f.getvalue().strip(), self.show_pattern)
-                key = f"Review.{model.id}"
-                self.assertIn(key, storage.all())
+        model = Review()
+        self.instances.append(model)
+        with patch('sys.stdout', new=StringIO()) as f:
+            HBNBCommand().onecmd(f"show Review {model.id}")
+            self.assertRegex(f.getvalue().strip(), self.show_pattern)
+            key = f"Review.{model.id}"
+            self.assertIn(key, storage.all())
 
     # TODO: rest of class methods
     def test_show_class(self):
