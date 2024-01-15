@@ -63,7 +63,7 @@ class TestBaseModelDocPep8(unittest.TestCase):
             self.assertTrue(len(str(func[1].__doc__)) > 0)
 
 
-class TestHBNBCommandClassWorking(unittest.TestCase):
+class TestConsoleWorking(unittest.TestCase):
     """unittest class for HBNBCommand class when everything works
     """
     def setUp(self):
@@ -900,7 +900,7 @@ EOF  all  create  destroy  help  quit  show  update''', f_value)
                 self.assertNotIn(key, storage.all())
 
 
-class TestHBNBCommandClassBreaking(unittest.TestCase):
+class TestConsoleBreaking(unittest.TestCase):
     """unittest class for HBNBCommand class when everything breaks
     """
     def test_wrong_command(self):
