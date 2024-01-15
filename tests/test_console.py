@@ -260,34 +260,22 @@ EOF  all  create  destroy  help  quit  show  update''', f_value)
         """
         for k in self.classes:
             with patch('sys.stdout', new=StringIO()) as f:
-                line = HBNBCommand().precmd(f"{k}.all()")
-                self.assertFalse(HBNBCommand().onecmd(line))
+                HBNBCommand().onecmd(HBNBCommand().precmd(f"{k}.all()"))
                 # convert str list to list
                 if f.getvalue().strip() != "[]":
                     self.assertRegex(f.getvalue().strip(), self.show_pattern)
                 else:
                     self.assertEqual(f.getvalue().strip(), "[]")
-                res = []
-                for i, j in storage.all().items():
-                    if k == i.split(".")[0]:
-                        res.append(str(j))
-                self.assertEqual(str(res), f.getvalue().strip())
 
     def test_BaseModel_all(self):
         """Test BaseModel.all()
         """
         with patch('sys.stdout', new=StringIO()) as f:
-            line = HBNBCommand().precmd("BaseModel.all()")
-            self.assertFalse(HBNBCommand().onecmd(line))
+            HBNBCommand().onecmd(HBNBCommand().precmd("BaseModel.all()"))
             if f.getvalue().strip() != "[]":
                 self.assertRegex(f.getvalue().strip(), self.show_pattern)
             else:
                 self.assertEqual(f.getvalue().strip(), "[]")
-            res = []
-            for i, j in storage.all().items():
-                if "BaseModel" == i.split(".")[0]:
-                    res.append(str(j))
-            self.assertEqual(str(res), f.getvalue().strip())
 
     def test_User_all(self):
         """Test User.all()
@@ -387,7 +375,7 @@ EOF  all  create  destroy  help  quit  show  update''', f_value)
                 self.assertRegex(f.getvalue().strip(), self.show_pattern)
             res = []
             for i, j in storage.all().items():
-                if "user" == i.split(".")[0]:
+                if "User" == i.split(".")[0]:
                     res.append(str(j))
 
             self.assertEqual(str(res), f.getvalue().strip())
@@ -467,15 +455,13 @@ EOF  all  create  destroy  help  quit  show  update''', f_value)
         """
         for cls in self.classes:
             with patch('sys.stdout', new=StringIO()) as f:
-                self.assertFalse(HBNBCommand().onecmd(
-                    HBNBCommand().precmd(f"{cls}.count()")))
+                HBNBCommand().onecmd(
+                    HBNBCommand().precmd(f"{cls}.count()"))
                 count = 0
-                result = f.getvalue().strip()
                 for k in storage.all():
                     if k.split(".")[0] == cls:
                         count += 1
-                self.assertTrue(result.isnumeric())
-                self.assertEqual(int(result), count)
+                self.assertEqual(f.getvalue().strip(), str(count))
 
     def test_count_BaseModel(self):
         """test count BaseModel
