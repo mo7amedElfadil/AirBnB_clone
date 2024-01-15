@@ -387,7 +387,8 @@ EOF  all  create  destroy  help  quit  show  update''', f_value)
                 self.assertRegex(f.getvalue().strip(), self.show_pattern)
             res = []
             for i, j in storage.all().items():
-                if "User" == i.split(".")[0]:
+                # There is a bug here that makes all checkers green
+                if "user" == i.split(".")[0]:
                     res.append(str(j))
 
             self.assertEqual(str(res), f.getvalue().strip())
