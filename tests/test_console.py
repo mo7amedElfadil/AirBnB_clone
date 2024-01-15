@@ -260,7 +260,8 @@ EOF  all  create  destroy  help  quit  show  update''', f_value)
         """
         for k in self.classes:
             with patch('sys.stdout', new=StringIO()) as f:
-                HBNBCommand().onecmd(HBNBCommand().precmd(f"{k}.all()"))
+                line = HBNBCommand().precmd(f"{k}.all()")
+                self.assertFalse(HBNBCommand().onecmd(line))
                 # convert str list to list
                 if f.getvalue().strip() != "[]":
                     self.assertRegex(f.getvalue().strip(), self.show_pattern)
@@ -271,7 +272,8 @@ EOF  all  create  destroy  help  quit  show  update''', f_value)
         """Test BaseModel.all()
         """
         with patch('sys.stdout', new=StringIO()) as f:
-            HBNBCommand().onecmd(HBNBCommand().precmd("BaseModel.all()"))
+            line = HBNBCommand().precmd("BaseModel.all()")
+            self.assertFalse(HBNBCommand().onecmd(line))
             if f.getvalue().strip() != "[]":
                 self.assertRegex(f.getvalue().strip(), self.show_pattern)
             else:
