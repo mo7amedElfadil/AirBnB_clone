@@ -132,12 +132,12 @@
 .places ul {
 	display: flex;
 	flex-direction: column;
-  list-style-type: none;
+	list-style-type: none;
 	gap: 10px;
-  }
+}
 
 .places .amenities ul li {
-  margin-bottom: 5px;
+	margin-bottom: 5px;
 }
 
 .places .amenities span {
@@ -162,6 +162,61 @@
 .places .reviews p {
 	font-size: 12px;
 }
+footer {
+	position: relative;
+}
+
+@media screen and (max-width: 800px) {
+
+	.places h1 ,
+	.price_by_night ,
+	.places article > h2 {
+		font-size: 24px;
+	}
+	.places .amenities h2, .places .reviews h2  {
+		font-size: 12px;
+	}
+	.places .reviews h3 {
+		font-size: 11.2px;
+
+	}
+	.places .reviews p {
+		font-size: 9.6px;
+	}
+}
 
 
+@media screen and (max-width: 480px) {
+	.btn_search {
+		right: 5px;
+		margin-right: 20px;
+		font-size: 14.4px;
+		min-height: 36px;
+		min-width: 5rem;
+}
+.filters {
+	height: 10rem;
+	justify-content: space-evenly;
+	flex-direction: column;
+}
+.filters .locations, .filters .amenities {
+	width: 50%;
+}
 
+	.places article {
+		width: 100%;
+		display: flex;
+		flex-direction: column;
+		justify-content: flex-start;
+	}
+	.places article > h2 {
+		align-self: flex-start;
+	}
+	.information {
+		height: 100%;
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: 1rem;
+		padding: 1rem;
+	}
+}

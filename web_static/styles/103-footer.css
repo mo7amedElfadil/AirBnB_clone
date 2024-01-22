@@ -1,0 +1,19 @@
+footer {
+	padding: 20px;
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	background: white;
+	height: 60px;
+	width: 100%;
+	margin: auto 0;
+	border-top: 1px solid #CCCCCC;	
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin-top: auto;
+}
+footer p {
+	text-align: center;
+}
+
