@@ -1,0 +1,30 @@
+.filters {
+	background: #FFF;
+	height: 70px;
+	width: 100%;
+	border: 1px solid #DDDDDD;
+	border-radius: 4px;
+	position: relative;
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+}
+
+.btn_search {
+	font-size: 18px;
+	background-color: #AD0000;
+	color: #FFFFFF;
+	height: 48px;
+	width: 20%;
+	border: none;
+	border-radius: 4px;
+	margin-right: 30px;
+	cursor: pointer;
+	transition: opacity 0.3s ease;
+
+
+}
+
+.btn_search:hover {
+	opacity: 0.9;
+}

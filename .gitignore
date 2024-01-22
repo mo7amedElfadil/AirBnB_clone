@@ -13,4 +13,11 @@
 !/models/*
 !/models/engine
 !/models/engine/*
+!/web_static
+!/web_static/*
+!/web_static/images/*
+!/web_static/styles/*
+!/*.html
+!/*.css
+!/*.png
 *main.py
