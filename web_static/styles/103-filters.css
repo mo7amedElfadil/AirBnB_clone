@@ -54,22 +54,28 @@
 }
 
 .filters .locations:hover .popover,
-.filters .amenities:hover .popover {
-	display: block;
+.filters .amenities:hover .popover, .filters .amenities:focus-within .popover, .filters .locations:focus-within .popover {
+    height: auto;
+    padding: 25px;
+    visibility: visible;
+    transform: scale(1, 1);
 }
 
 .filters .locations .popover,
 .filters .amenities .popover {
-  display: none;
-  position: absolute;
-  top: 100%;
-  background-color: #FAFAFA;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-  border: 1px solid #DDDDDD;
-  border-radius: 4px;
-  padding: 10px;
-  z-index: 1;
-  width: 100%;
+position: absolute;
+    display: grid;
+    gap: 12px;
+    top: 100%;
+    width: 100%;
+    height: 0;
+    padding: 0;
+    background-color: #FAFAFA;
+    border: 1px solid #dddddd;
+    transform: scale(1, 0);
+    transform-origin: top;
+    transition: all 0.2s linear;
+    z-index: 1;
 }
 
 ul {
